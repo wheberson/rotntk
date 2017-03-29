@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!--
+	Copyright (c) 2017 Wheberson Migueletti - http://programacao.wheberson.com.br
+	Licensed under The MIT License - http://www.opensource.org/licenses/mit-license.php
+-->
+<html lang="pt-BR">
+	<head>
+		<title>CPF - Geraçao, validaçao e formataçao</title>
+		<meta charset="UTF-8" />
+		<style>
+			.botoes {margin:1em auto auto auto}
+			.secao {padding:2em}
+			.valor {margin:5px auto 1em 2em}
+			#cpfFormatado {margin:2em auto auto auto;color:green}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="rotntk/js/gambiarra.js"></script>
+		<script src="rotntk/js/inicio.js"></script>
+		<script src="rotntk/js/apoio.js"></script>
+		<script>
+			function aoCarregar ()
+
+			{
+				$('#botaoGerar').click (
+					function ()
+
+					{
+						var valor= '';
+						for (var i= 0; i < 9; i++)
+							valor+= Math.floor (Math.random () * 10).toString ();
+						var dv= gerarDVCPF (valor);
+						var cpf= valor + dv;
+						if (validarCPF (cpf)) {
+							$('#cpf').val (cpf);
+							$('#cpfFormatado').html (formatarCPF (cpf));
+							$('#cpfFormatado').css ('color', 'green');
+						}
+						else {
+							alert ('CPF invalido: ' + cpf);
+							$('#cpfFormatado').html ('CPF invalido');
+							$('#cpfFormatado').css ('color', 'red');
+						}
+					}
+				);
+
+				$('#botaoValidar').click (
+					function ()
+
+					{
+						var cpf= $('#cpf').val ();
+						if (validarCPF (cpf)) {
+							alert ('CPF ok: ' + cpf);
+							$('#cpfFormatado').html (formatarCPF (cpf));
+							$('#cpfFormatado').css ('color', 'green');
+						}
+						else {
+							alert ('CPF invalido: ' + cpf);
+							$('#cpfFormatado').html ('CPF invalido');
+							$('#cpfFormatado').css ('color', 'red');
+						}
+					}
+				);
+			}
+		</script>
+	</head>
+	<body>
+		<h1>CPF - Geraçao, validaçao e formataçao</h1>
+		<div class="secao">
+			<div class="titulo">CPF</div>
+			<div class="valor"><input id="cpf" type="text" maxlength="11" class="inteiro-positivo" /> <span id="cpfFormatado"></span></div>
+			<div class="botoes"><input id="botaoValidar" type="button" value="Validar" /> <input id="botaoGerar" type="button" value="Gerar aleatoriamente" /></div>
+		</div>
+	</body>
+</html>
