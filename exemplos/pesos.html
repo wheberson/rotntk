@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<!--
+	Copyright (c) 2017 Wheberson Migueletti - http://programacao.wheberson.com.br
+	Licensed under The MIT License - http://www.opensource.org/licenses/mit-license.php
+-->
+<html lang="pt-BR">
+	<head>
+		<title>Conversao de bytes para peso (kilo, mega, tera, etc)</title>
+		<meta charset="UTF-8" />
+		<style>
+			.botoes {margin:1em auto auto auto}
+			.secao {padding:2em}
+			.valor {margin:5px auto 1em 2em}
+			#peso {margin:2em auto auto auto;color:green}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="rotntk/js/gambiarra.js"></script>
+		<script src="rotntk/js/inicio.js"></script>
+		<script src="rotntk/js/apoio.js"></script>
+		<script>
+			/*
+				Testes
+					296826085376	276GB
+					3618963456		3,37GB
+					1484536116		1,38GB
+					723550035		690MB
+					1515390			1,44MB
+					17143			16,7KB
+			*/
+
+			var trunca= false;
+			var casas= 2;
+			var sempreAbreviar= true;
+			var maxInteiro= Number.MAX_SAFE_INTEGER ? Number.MAX_SAFE_INTEGER : 1125899906842624;
+
+			function aoCarregar ()
+
+			{
+				$('#botaoConverter').click (
+					function ()
+
+					{
+						var bytes= $('#bytes').val ();
+						bytes= parseInt (bytes, 10)
+						if (!isNaN (bytes) && (bytes <= maxInteiro)) {
+							var peso= cnvNumeroParaPeso (bytes, trunca, casas, sempreAbreviar);
+							$('#peso').html (peso);
+						}
+						else
+							alert ('Valor maximo: ' + maxInteiro);
+					}
+				);
+
+				$('#botaoGerar').click (
+					function ()
+
+					{
+						var valor= '';
+						var n= Math.floor (Math.random () * 14) + 3;
+						for (var i= 0; i < n; i++)
+							valor+= Math.floor (Math.random () * 10).toString ();
+						var peso= cnvNumeroParaPeso (valor, trunca, casas, sempreAbreviar);
+						$('#bytes').val (valor);
+						$('#peso').html (peso);
+					}
+				);
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Conversao de bytes para peso (kilo, mega, tera, etc)</h1>
+		<div class="secao">
+			<div class="titulo">Bytes</div>
+			<div class="valor"><input id="bytes" type="text" class="inteiro-positivo" /> <span id="peso"></span></div>
+			<div class="botoes"><input id="botaoConverter" type="button" value="Converter" /> <input id="botaoGerar" type="button" value="Gerar aleatoriamente" /></div>
+		</div>
+	</body>
+</html>

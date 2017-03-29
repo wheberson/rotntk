@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!--
+	Copyright (c) 2017 Wheberson Migueletti - http://programacao.wheberson.com.br
+	Licensed under The MIT License - http://www.opensource.org/licenses/mit-license.php
+-->
+<html lang="pt-BR">
+	<head>
+		<title>Modulo 11 - Geraçao e validaçao</title>
+		<meta charset="UTF-8" />
+		<style>
+			.botoes {margin:1em auto auto auto}
+			.secao {padding:2em}
+			.valor {margin:5px auto 1em 2em}
+			#modulo11Formatado {margin:2em auto auto auto;color:green}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="rotntk/js/gambiarra.js"></script>
+		<script src="rotntk/js/inicio.js"></script>
+		<script src="rotntk/js/apoio.js"></script>
+		<script>
+			function formatarModulo11 (aValor)
+
+			{
+				var retorno= '';
+				if (aValor) {
+					var valor= aValor.trim ();
+					retorno= (valor.length <= 1) ? valor : (valor.substr (0, valor.length-1) + '-' + valor.substr (valor.length-1, 1));
+				}
+				return retorno;
+			}
+
+			function aoCarregar ()
+
+			{
+			
+				$('#botaoGerar').click (
+					function ()
+
+					{
+						var valor= '';
+						var n= Math.floor (Math.random () * 14) + 3;
+						for (var i= 0; i < n; i++)
+							valor+= Math.floor (Math.random () * 10).toString ();
+						var dv= gerarDVModulo11 (valor);
+						var modulo11= valor + dv;
+						if (validarModulo11 (modulo11)) {
+							$('#modulo11').val (modulo11);
+							$('#modulo11Formatado').html (formatarModulo11 (modulo11));
+							$('#modulo11Formatado').css ('color', 'green');
+						}
+						else {
+							alert ('modulo11 invalido: ' + modulo11);
+							$('#modulo11Formatado').html ('modulo11 invalido');
+							$('#modulo11Formatado').css ('color', 'red');
+						}
+					}
+				);
+
+				$('#botaoValidar').click (
+					function ()
+
+					{
+						var modulo11= $('#modulo11').val ();
+						if (validarModulo11 (modulo11)) {
+							alert ('modulo11 ok: ' + modulo11);
+							$('#modulo11Formatado').html (formatarModulo11 (modulo11));
+							$('#modulo11Formatado').css ('color', 'green');
+						}
+						else {
+							alert ('modulo11 invalido: ' + modulo11);
+							$('#modulo11Formatado').html ('modulo11 invalido');
+							$('#modulo11Formatado').css ('color', 'red');
+						}
+					}
+				);
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Modulo 11 - Geraçao e validaçao</h1>
+		<div class="secao">
+			<div class="titulo">Modulo 11</div>
+			<div class="valor"><input id="modulo11" type="text" class="inteiro-positivo" /> <span id="modulo11Formatado"></span></div>
+			<div class="botoes"><input id="botaoValidar" type="button" value="Validar" /> <input id="botaoGerar" type="button" value="Gerar aleatoriamente" /></div>
+		</div>
+	</body>
+</html>
