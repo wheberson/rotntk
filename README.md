@@ -16,3 +16,8 @@ Rotinas (funções):
 	validarData
 	validarModulo11
 
+Exemplos:
+	http://programacao.wheberson.com.br/rotntk-exemplos
+
+Download:
+	http://programacao.wheberson.com.br/rotntk/rotntk.zip
