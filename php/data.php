@@ -2,6 +2,18 @@
 // Copyright (c) 2017 Wheberson Migueletti - http://programacao.wheberson.com.br
 // Licensed under The MIT License - http://www.opensource.org/licenses/mit-license.php
 
+// dd/mm/aaaa ou dd/mm/aaaa hh:mm ou dd/mm/aaaa hh:mm:ss
+function adcDias ($aValor, $aQtd)
+
+{
+	$retorno= $aValor;
+	if (!empty ($aQtd) && ($aQtd != 0) && is_numeric ($aQtd)) {
+		$f= obterDataFormato ($aValor);
+		$retorno= $aQtd > 0 ? date ($f, strtotime ("+$aQtd days")) : date ($f, strtotime ("$aQtd days"));
+	}
+	return $retorno;
+}
+
 // Menor que 0: aData1 anterior a aData2; igual a 0: aData1 = aData2; maior que 0: aData1 posterior a aData2
 function compararDatas ($aData1, $aData2)
 
@@ -13,17 +25,7 @@ function compararDatas ($aData1, $aData2)
 function cnvStringParaDate ($aValor)
 
 {
-	$retorno= 0;
-	if (!empty ($aValor)) {
-		$n= strlen ($aValor);
-		$f= 'd/m/Y';
-		if ($n == 16)
-			$f= 'd/m/Y h:i';
-		else if ($n == 19)
-			$f= 'd/m/Y h:i:s';
-		$retorno= date ($f, cnvStringParaTime ($aValor));
-	}
-	return $retorno;
+	return empty ($aValor) ? '' : date (obterDataFormato ($aValor), cnvStringParaTime ($aValor));
 }
 
 // String (dd/mm/aaaa ou dd/mm/aaaa hh:mm ou dd/mm/aaaa hh:mm:ss) pra Timestamp
@@ -49,6 +51,22 @@ function cnvStringParaTime ($aValor)
 				}
 			}
 		}
+	}
+	return $retorno;
+}
+
+// dd/mm/aaaa ou dd/mm/aaaa hh:mm ou dd/mm/aaaa hh:mm:ss
+function obterDataFormato ($aValor)
+
+{
+	$retorno= '';
+	if (!empty ($aValor)) {
+		$n= strlen ($aValor);
+		$retorno= 'd/m/Y';
+		if ($n == 16)
+			$retorno= 'd/m/Y h:i';
+		else if ($n == 19)
+			$retorno= 'd/m/Y h:i:s';
 	}
 	return $retorno;
 }
