@@ -12,6 +12,27 @@ function obterData (aValor)
 	}
 }
 
+function obterDataCorrente (aComHoras, aComMinutos, aComSegundos)
+
+{
+	var d= new Date ();
+	var dia= d.getDate ();
+	var mes= parseInt (d.getMonth (), 10) + 1;
+	var dh= '';
+	if (aComHoras) {
+		var horas= d.getHours ();
+		var minutos= d.getMinutes ();
+		var segundos= d.getSeconds ();
+		dh= ' ' + (horas <= 9 ? '0' + horas : horas);
+		if (aComMinutos) {
+			dh+= ':' + (minutos <= 9 ? '0' + minutos : minutos);
+			if (aComSegundos)
+				dh+= ':' + (segundos <= 9 ? '0' + segundos : segundos);
+		}
+	}
+	return (dia <= 9 ? '0' + dia : dia) + '/' + (mes <= 9 ? '0' + mes : mes) + '/' + d.getFullYear () + dh;
+}
+
 function validarData (aValor)
 
 {
