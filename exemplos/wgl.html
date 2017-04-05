@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<!--
+	Copyright (c) 2017 Wheberson Migueletti - http://programacao.wheberson.com.br
+	Licensed under The MIT License - http://www.opensource.org/licenses/mit-license.php
+	
+	Tutoriais:
+		https://developer.mozilla.org/pt-BR/docs/Web/API/WebGL_API/Tutorial
+		https://developer.mozilla.org/pt-BR/docs/Web/API/WebGLRenderingContext
+		https://www.tutorialspoint.com/webgl/webgl_geometry.htm
+		http://chimera.labs.oreilly.com/books/1234000000802
+		https://www.html5rocks.com/en/tutorials/webgl/webgl_fundamentals
+		https://developer.tizen.org/dev-guide/html5/webgl.html
+		https://webglfundamentals.org/webgl/lessons/webgl-how-it-works.html
+		https://sites.google.com/site/progyumming/javascript/shortest-webgl
+-->
+<html lang="pt-BR">
+	<head>
+		<title>WebGL</title>
+		<meta charset="UTF-8" />
+		<style>
+			.secao {margin:1em 1em 0.5em auto}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="../rotntk/js/gambiarra.js"></script>
+		<script src="../rotntk/js/inicio.js"></script>
+		<script src="../rotntk/js/wgl.js"></script>
+		<script>
+			var wgl= new WebGL ();
+			wgl.shaderPadrao= ['vec4 (shaderVertexPosition, 1.5)', 'vec4 (0, 1.0, 1.0, 1.0)'];
+
+			/*wgl.aoCarregarShader= function (aVertex)
+
+			{
+				var retorno;
+				if (aVertex)
+					retorno= 'attribute vec3 shaderVertexPosition; void main () {gl_Position= vec4 (shaderVertexPosition, 1);}';
+				else
+					retorno= 'void main () {gl_FragColor= vec4 (0, 0, 1.0, 1.0);}';
+				return retorno;
+			}*/
+
+			function desenhar ()
+			
+			{
+				var gl= wgl.rc;
+				if (gl) {
+					// Limpar
+						gl.clearColor (0.0, 0.0, 0.0, 1.0);
+						gl.clearDepth(1.0); 
+						gl.enable (gl.DEPTH_TEST);
+						gl.depthFunc (gl.LEQUAL);
+						gl.viewport (0, 0, wgl.canvas.width, wgl.canvas.height);
+						gl.clear (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+					// Armazenar o objeto a ser desenhado
+						var vertices= [
+						//	x	y	z
+							 1,  1, 0,	// Vertex 1 (canto superior direito)
+							 1, -1, 0,	// Vertex 2 (canto inferior direito)
+							-1, -1, 0,	// Vertex 3 (canto inferior esquerdo)
+						];
+						gl.bindBuffer (gl.ARRAY_BUFFER, gl.createBuffer ());
+						gl.bufferData (gl.ARRAY_BUFFER, new Float32Array (vertices), gl.STATIC_DRAW);
+						var attribLocation= wgl.obterAttribLocation ();
+						gl.vertexAttribPointer (attribLocation, 3, gl.FLOAT, false, 0, 0);
+
+					// Desenhar
+						gl.drawArrays (gl.TRIANGLE_STRIP, 0, 3);
+				}
+				if (wgl.erro != '')
+					alert ('Erro: ' + wgl.erro);
+			}
+
+			function aoCarregar ()
+
+			{
+				$('#botaoDesenhar').click (
+					function ()
+
+					{
+						if (!wgl.configurar (document.getElementById ('quadroCanvas'), true))
+							alert ('[1] Erro: ' + wgl.erro);
+						else
+							try {
+								desenhar ();
+							} 
+							catch (e) {
+								alert ('[2] Erro: ' + e);
+							}
+					}
+				);
+			}
+		</script>
+	</head>
+	<body>
+		<h1>WebGL</h1>
+		<div id="dados" class="secao">
+			<input id="botaoDesenhar" type="button" value="Desenhar" />
+		</div>
+		<div class="secao">
+			<canvas id="quadroCanvas" width="350" height="350"></canvas>
+		</div>
+	</body>
+</html>
