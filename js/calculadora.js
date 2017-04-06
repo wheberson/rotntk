@@ -97,13 +97,13 @@ Calculadora.prototype.recalcular= function (aValor)
 		var x, y, z;
 		for (chave in aValor)
 			switch (chave) {
-				case 'X':
+				case 'x': case 'X':
 					x= aValor[chave];
 					break;
-				case 'Y':
+				case 'y': case 'Y':
 					y= aValor[chave];
 					break;
-				case 'Z':
+				case 'z': case 'Z':
 					z= aValor[chave];
 					break;
 			}
