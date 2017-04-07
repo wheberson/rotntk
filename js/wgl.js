@@ -68,12 +68,11 @@ function WebGL ()
 	{
 		if (this.rc) {
 			this.shaderProgram= this.rc.createProgram ();
-				this.rc.attachShader (this.shaderProgram, this.configurarShader (true));
-				this.rc.attachShader (this.shaderProgram, this.configurarShader (false));
-				this.rc.linkProgram (this.shaderProgram);
-				if (!this.rc.getProgramParameter (this.shaderProgram, this.rc.LINK_STATUS))
-					this.erro= 'Erro no WebGLRenderingContext.linkProgram';
-			this.rc.useProgram (this.shaderProgram);
+			this.rc.attachShader (this.shaderProgram, this.configurarShader (true));
+			this.rc.attachShader (this.shaderProgram, this.configurarShader (false));
+			this.rc.linkProgram (this.shaderProgram);
+			if (!this.rc.getProgramParameter (this.shaderProgram, this.rc.LINK_STATUS))
+				this.erro= 'Erro no WebGLRenderingContext.linkProgram';
 		}
 	}
 
