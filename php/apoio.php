@@ -83,6 +83,16 @@ function manterDigitosSomente ($aValor)
 	return empty ($aValor) ? '' : preg_replace ('/[^0-9]/', '', $aValor); // Remove tudo exceto 0 a 9
 }
 
+function mntSlug ($aValor)
+
+{
+	$comAcentos= array ('á', 'à', 'â', 'ã', 'é', 'è', 'ê', 'í', 'ó', 'ò', 'ô', 'õ', 'ú', 'ç');
+	$semAcentos= array ('a', 'a', 'a', 'a', 'e', 'e', 'e', 'i', 'o', 'o', 'o', 'o', 'u', 'c');
+	$retorno= str_replace ($comAcentos, $semAcentos, trim (mb_strtolower ($aValor, 'UTF-8')));
+	$retorno= preg_replace (array ('/[^a-zA-Z0-9 -]/', '/[ -]+/', '/^-|-$/'), array ('', '-', ''), $retorno);
+	return $retorno;
+}
+
 function validarCPF ($aValor)
 
 {
