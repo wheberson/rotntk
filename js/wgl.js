@@ -76,12 +76,12 @@ function WebGL ()
 		}
 	}
 
-	this.obterAttribLocation= function ()
+	this.obterAttribLocation= function (aNome)
 
 	{
 		var retorno= 0;
 		if (this.rc && this.shaderProgram) {
-			retorno= this.rc.getAttribLocation (this.shaderProgram, 'shaderVertexPosition');
+			retorno= this.rc.getAttribLocation (this.shaderProgram, aNome ? aNome : 'shaderVertexPosition');
 			this.rc.enableVertexAttribArray (retorno);
 		}
 		return retorno;
