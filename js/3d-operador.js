@@ -19,9 +19,9 @@ Operador3D.prototype.cross= function (aU, aV)
 
 {
 	var retorno= this.reservar (4);
-    retorno[0]= aU[1]*aV[2] - aU[2]*aV[1];
-    retorno[1]= aU[2]*aV[0] - aU[0]*aV[2];
-    retorno[2]= aU[0]*aV[1] - aU[1]*aV[0];
+	retorno[0]= aU[1]*aV[2] - aU[2]*aV[1];
+	retorno[1]= aU[2]*aV[0] - aU[0]*aV[2];
+	retorno[2]= aU[0]*aV[1] - aU[1]*aV[0];
 	retorno[3]= 1;
 	return retorno;
 }
@@ -40,8 +40,8 @@ Operador3D.prototype.multiplicar= function (aA, aB)
 
 {
 	var retorno= this.reservar (16);
-	var i00=  0, i01=  1, i02=  2, i03=  3;
-	var i10=  4, i11=  5, i12=  6, i13=  7;
+	var i00=  0, i01=  1, i02=	2, i03=	 3;
+	var i10=  4, i11=  5, i12=	6, i13=	 7;
 	var i20=  8, i21=  9, i22= 10, i23= 11;
 	var i30= 12, i31= 13, i32= 14, i33= 15;
 
@@ -84,18 +84,18 @@ Operador3D.prototype.normalizar= function (aVetor)
 
 {
 	var retorno= this.reservar (4);
-    var c= aVetor[0]*aVetor[0] + aVetor[1]*aVetor[1] + aVetor[2]*aVetor[2];
-    if (c != 0) {
-        c= 1/Math.sqrt (c);
-        retorno[0]= aVetor[0]*c;
-        retorno[1]= aVetor[1]*c;
-        retorno[2]= aVetor[2]*c;
+	var c= aVetor[0]*aVetor[0] + aVetor[1]*aVetor[1] + aVetor[2]*aVetor[2];
+	if (c != 0) {
+		c= 1/Math.sqrt (c);
+		retorno[0]= aVetor[0]*c;
+		retorno[1]= aVetor[1]*c;
+		retorno[2]= aVetor[2]*c;
 		retorno[3]= 1;
-    }
+	}
 	else {
-        retorno[0]= aVetor[0];
-        retorno[1]= aVetor[1];
-        retorno[2]= aVetor[2];
+		retorno[0]= aVetor[0];
+		retorno[1]= aVetor[1];
+		retorno[2]= aVetor[2];
 		retorno[3]= aVetor.length <= 3 ? 1 : aVetor[3];
 	}
 	return retorno;
@@ -108,10 +108,10 @@ Operador3D.prototype.olharPara= function (aEye, aAt, aUp)
 	var f= this.normalizar ([aAt[0]-aEye[0], aAt[1]-aEye[1], aAt[2]-aEye[2]]);
 	var s= this.normalizar (this.cross (f, aUp));
 	var u= this.cross (s, f);
-	m[ 0]=  s[0]; m[ 1]=  s[1]; m[ 2]=  s[2]; m[ 3]= 0;
-	m[ 4]=  u[0]; m[ 5]=  u[1]; m[ 6]=  u[2]; m[ 7]= 0;
+	m[ 0]=	s[0]; m[ 1]=  s[1]; m[ 2]=	s[2]; m[ 3]= 0;
+	m[ 4]=	u[0]; m[ 5]=  u[1]; m[ 6]=	u[2]; m[ 7]= 0;
 	m[ 8]= -f[0]; m[ 9]= -f[1]; m[10]= -f[2]; m[11]= 0;
-	m[12]=     0; m[13]=     0; m[14]=     0; m[15]= 1;
+	m[12]=	   0; m[13]=	 0; m[14]=	   0; m[15]= 1;
 	return this.transladar (m, [-aEye[0], -aEye[1], -aEye[2]]);
 }
 
@@ -131,17 +131,17 @@ Operador3D.prototype.obterPerspectivaLH= function (aFOVY, aAspect, aZNear, aZFar
 
 {
 	var retorno= this.reservar (16);
-    var angulo= this.cnvGrausParaRadianos (aFOVY/2);
-    var sen= Math.sin (angulo);
-    var d= aZFar-aZNear;
-    if ((d != 0) && (sen != 0) && (aAspect != 0)) {
+	var angulo= this.cnvGrausParaRadianos (aFOVY/2);
+	var sen= Math.sin (angulo);
+	var d= aZFar-aZNear;
+	if ((d != 0) && (sen != 0) && (aAspect != 0)) {
 		var cot= Math.cos (angulo) / sen;
 		retorno[ 0]= cot/aAspect;	retorno[ 1]= 0;		retorno[ 2]= 0;			retorno[ 3]= 0;
 		retorno[ 4]= 0;				retorno[ 5]= cot;	retorno[ 6]= 0;			retorno[ 7]= 0;
 		retorno[ 8]= 0;				retorno[ 9]= 0;		retorno[10]= aZFar/d;	retorno[11]= -(aZNear*aZFar)/d;
 		retorno[12]= 0;				retorno[13]= 0;		retorno[14]= 1;			retorno[15]= 0;
 	}
-    return retorno;
+	return retorno;
 };
 
 // Right-handed
@@ -149,24 +149,24 @@ Operador3D.prototype.obterPerspectiva= function (aFOVY, aAspect, aZNear, aZFar)
 
 {
 	var retorno= this.reservar (16);
-    var angulo= this.cnvGrausParaRadianos (aFOVY/2);
-    var sen= Math.sin (angulo);
-    var d= aZFar-aZNear;
-    if ((d != 0) && (sen != 0) && (aAspect != 0)) {
+	var angulo= this.cnvGrausParaRadianos (aFOVY/2);
+	var sen= Math.sin (angulo);
+	var d= aZFar-aZNear;
+	if ((d != 0) && (sen != 0) && (aAspect != 0)) {
 		var cot= Math.cos (angulo) / sen;
 		retorno[ 0]= cot/aAspect;	retorno[ 1]= 0;		retorno[ 2]= 0;					retorno[ 3]= 0;
 		retorno[ 4]= 0;				retorno[ 5]= cot;	retorno[ 6]= 0;					retorno[ 7]= 0;
 		retorno[ 8]= 0;				retorno[ 9]= 0;		retorno[10]= -(aZNear+aZFar)/d;	retorno[11]= -(2*aZNear*aZFar)/d;
 		retorno[12]= 0;				retorno[13]= 0;		retorno[14]= -1;				retorno[15]= 0;
 	}
-    return retorno;
+	return retorno;
 
 };
 
 Operador3D.prototype.poderNormalizar= function (aVetor)
 
 {
-    return (aVetor[0]*aVetor[0] + aVetor[1]*aVetor[1] + aVetor[2]*aVetor[2]) != 0;
+	return (aVetor[0]*aVetor[0] + aVetor[1]*aVetor[1] + aVetor[2]*aVetor[2]) != 0;
 }
 
 Operador3D.prototype.reservar= function (aValor)
