@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<!--
+	Copyright (c) 2017 Wheberson Migueletti - http://programacao.wheberson.com.br
+	Licensed under The MIT License - http://www.opensource.org/licenses/mit-license.php
+-->
+<html lang="pt-BR">
+	<head>
+		<title>HTML5 Canvas - 3D - Exemplo 1 - Tetraedro</title>
+		<meta charset="UTF-8" />
+		<style>
+			.secao {margin:1em 1em 0.5em auto}
+
+			#quadroCanvas {margin-right:1em;border:solid 1px silver;height:400px;width:100%}
+
+			#info {padding:1em;background-color:whitesmoke}
+			#infoTitulo {opacity:0.6;cursor:pointer;text-align:right}
+			#infoTitulo:hover {opacity:1}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="../js/inicio.js"></script>
+		<script src="../js/2d-desenho.js"></script>
+		<script src="../js/3d-operador.js"></script>
+		<script>
+			var camera= {at: [0, 0, 0], eye: [0, 0, 5], up: [0, 1, 0]};
+			var clicou= false;
+			var desenho;
+			var matrizProjection;
+			var operador;
+			var posicao= [0, 0];
+			var rotacao= [0, 0];
+			var vertices3D;
+
+			function atualizar ()
+
+			{
+				$('#posicao').html ('R(' + rotacao[1] + '; ' + rotacao[0] + '); P(' + posicao[0] + '; ' + posicao[1] + ')');
+			}
+
+			function desenhar (aVertices3D, aMatriz)
+
+			{
+				var vertices2D= new Array (aVertices3D.length/3);
+
+				var n= aVertices3D.length;
+				var c= 0, i= 0, j= 0;
+				var cores= ['red', 'green', 'blue', 'gold', 'black', 'magenta'];
+				var nCores= cores.length;
+
+				// Transforma cada vertice 3D em coordenadas de dispositivo 2D
+					while (i < n) {
+						var coord= operador.visualizar (aMatriz, [aVertices3D[i++], aVertices3D[i++], aVertices3D[i++], 1.0]);
+						vertices2D[j++]= {ponto: desenho.visualizar (coord), cor: cores[c]};
+						if (i % 3 == 0)
+							c+= c < nCores ? 1 : 0;
+					}
+
+				desenho.desenhar (vertices2D);
+			}
+
+			function encenar ()
+
+			{
+				var rotacaoDefault= [-45, 37];
+
+				desenho.limpar ();
+
+				// World
+					var matrizWorld= operador.obterIdentidade ();
+					matrizWorld= operador.rotacionar (matrizWorld, rotacaoDefault[1] + rotacao[1], [1, 0, 0]);
+					matrizWorld= operador.rotacionar (matrizWorld, rotacaoDefault[0] + rotacao[0], [0, 1, 0]);
+
+				// View
+					var matrizView= operador.olharPara (camera.eye, camera.at, camera.up);
+
+				// Tetraedro
+					var matrizTetraedro= operador.obterIdentidade ();
+					matrizTetraedro= operador.multiplicar (matrizWorld, matrizTetraedro);
+					matrizTetraedro= operador.multiplicar (matrizView, matrizTetraedro);
+					matrizTetraedro= operador.multiplicar (matrizProjection, matrizTetraedro);
+					desenhar (vertices3D, matrizTetraedro);
+
+				window.requestAnimationFrame (encenar);
+			}
+
+			function inicializar (aQuadro)
+
+			{
+				desenho= new Desenho2D (aQuadro, [0, 0, aQuadro.width, aQuadro.height]);
+				operador= new Operador3D ();
+				montar ();
+				redimensionar ();
+				encenar ();
+			}
+
+			function montar ()
+
+			{
+				vertices3D= [
+					0, 0, 0,
+					0, 0, 1, 
+					1, 0, 0,
+					0, 1, 0,
+					0, 0, 0,
+				];
+			}
+
+			function redimensionar ()
+
+			{
+				desenho.quadro.width= $('#quadroCanvas').width ();
+				desenho.quadro.height= $('#quadroCanvas').height ();
+				desenho.viewport[2]= desenho.quadro.width;
+				desenho.viewport[3]= desenho.quadro.height;
+				$('#viewport').html ('Viewport: [' + desenho.viewport[0] + '; ' + desenho.viewport[1] + '; ' + desenho.viewport[2] + '; ' + desenho.viewport[3] + ']');
+				var angulo= 45;
+				var proporcao= desenho.viewport[2]/desenho.viewport[3];
+				matrizProjection= operador.obterPerspectiva (angulo, proporcao, 1.0, 100.0);
+			}
+
+			function aoCarregar ()
+
+			{
+				$('#quadroCanvas').mousedown (
+					function (aEvent)
+
+					{
+						clicou= true;
+						posicao= [aEvent.clientX, aEvent.clientY];
+						atualizar ();
+					}
+				);
+
+				$(document).mouseup (
+					function ()
+
+					{
+						clicou= false;
+						posicao= [0, 0];
+						rotacao= [0, 0];
+						atualizar ();
+					}
+				);
+
+				$('#quadroCanvas').mousemove (
+					function (aEvent)
+
+					{
+						if (clicou)
+							rotacao= [aEvent.clientX - posicao[0], aEvent.clientY - posicao[1]];
+						atualizar ();
+					}
+				);
+
+				$(window).resize (
+					function ()
+
+					{
+						redimensionar ();
+					}
+				);
+
+				$('#infoTitulo').click (
+					function ()
+
+					{
+						$('#infoConteudo').toggle ();
+					}
+				);
+
+				inicializar (document.getElementById ('quadroCanvas'));
+				atualizar ();
+			}
+		</script>
+	</head>
+	<body>
+		<h1>HTML5 Canvas - 3D - Exemplo 1 - Tetraedro</h1>
+		<div id="info">
+			<div id="infoTitulo">Info <sub>&#8597;</sub></div>
+			<div id="infoConteudo">
+				<p>Para rotacionar o objeto clique nele e movimente o mouse.</p>
+				<div id="viewport"></div>
+				<div id="posicao"></div>
+			</div>
+		</div>
+		<div class="secao">
+			<canvas id="quadroCanvas"></canvas>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<!--
+	Copyright (c) 2017 Wheberson Migueletti - http://programacao.wheberson.com.br
+	Licensed under The MIT License - http://www.opensource.org/licenses/mit-license.php
+-->
+<html lang="pt-BR">
+	<head>
+		<title>HTML5 Canvas - 3D - Exemplo 0 - Triangulo</title>
+		<meta charset="UTF-8" />
+		<style>
+			.secao {margin:1em 1em 0.5em auto}
+
+			#quadroCanvas {margin-right:1em;border:solid 1px silver}
+
+			#info {padding:1em;background-color:whitesmoke}
+			#infoTitulo {opacity:0.6;cursor:pointer;text-align:right}
+			#infoTitulo:hover {opacity:1}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="../js/inicio.js"></script>
+		<script src="../js/2d-desenho.js"></script>
+		<script src="../js/3d-operador.js"></script>
+		<script>
+			var desenho;
+			var matriz;
+			var operador;
+			var vertices2D;
+			var vertices3D;
+
+			function desenhar ()
+
+			{
+				desenho.limpar ();
+
+				var n= vertices3D.length;
+				var c= 0, i= 0, j= 0;
+				var cores= ['red', 'green', 'blue', 'gold', 'black', 'magenta'];
+				var nCores= cores.length;
+
+				// Transforma cada vertice 3D em coordenadas de dispositivo 2D
+					while (i < n) {
+						var coord= operador.visualizar (matriz, [vertices3D[i++], vertices3D[i++], vertices3D[i++], 1.0]);
+						vertices2D[j++]= {ponto: desenho.visualizar (coord), cor: cores[c]};
+						c+= c < nCores ? 1 : 0;
+					}
+
+				desenho.desenhar (vertices2D);
+			}
+
+			function encenar ()
+
+			{
+				matriz= operador.obterIdentidade ();
+				desenhar ();
+			}
+
+			function inicializar (aQuadro)
+
+			{
+				desenho= new Desenho2D (aQuadro, [0, 0, aQuadro.width, aQuadro.height]);
+				operador= new Operador3D ();
+				montar ();
+				encenar ();
+			}
+
+			function montar ()
+
+			{
+				vertices3D= [
+					-0.5, -1, 1, // esquerda, embaixo
+					-0.5,  1, 1, // esquerda, encima
+					   0, -1, 1, // direita, embaixo
+				];
+				vertices2D= new Array (vertices3D.length/3);
+			}
+
+			function aoCarregar ()
+
+			{
+				$('#infoTitulo').click (
+					function ()
+
+					{
+						$('#infoConteudo').toggle ();
+					}
+				);
+
+				inicializar (document.getElementById ('quadroCanvas'));
+			}
+		</script>
+	</head>
+	<body>
+		<h1>HTML5 Canvas - 3D - Exemplo 0 - Triangulo</h1>
+		<div id="info">
+			<div id="infoTitulo">Info <sub>&#8597;</sub></div>
+			<div id="infoConteudo">
+				<p>Triangulo desenhado em ambiente 3D utilizando o Canvas (2D) do HTML5.
+				Apenas transformaçao para coordenadas de dispositivo (viewport).
+				Para tanto utiliza-se uma matriz identidade.</p>
+			</div>
+		</div>
+		<div class="secao">
+			<canvas id="quadroCanvas" width="400" height="400"></canvas>
+		</div>
+	</body>
+</html>

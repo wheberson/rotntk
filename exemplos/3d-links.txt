@@ -1,0 +1,87 @@
+Model, world, view (camera), projection, viewport, transformaçoes:
+	World
+		https://msdn.microsoft.com/en-us/library/windows/desktop/bb206365(v=vs.85).aspx
+	Viewport
+		https://www.cs.mtsu.edu/~jhankins/files/4250/notes/WinToView/WinToViewMap.html
+		http://www.di.ubi.pt/~agomes/cg/teoricas/04e-windows.pdf
+		https://www.khronos.org/registry/OpenGL-Refpages/es2.0/xhtml/glViewport.xml
+		https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluProject.xml
+		https://msdn.microsoft.com/en-us/library/windows/desktop/bb206341(v=vs.85).aspx
+	https://en.wikipedia.org/wiki/3D_projection
+	http://www.ntu.edu.sg/home/ehchua/programming/opengl/cg_basicstheory.html
+	http://www.codinglabs.net/article_world_view_projection_matrix.aspx
+	https://developer.mozilla.org/pt-BR/docs/Web/API/WebGL_API/WebGL_model_view_projection
+	https://open.gl/transformations
+	https://msdn.microsoft.com/en-us/library/windows/desktop/bb206269(v=vs.85).aspx
+	https://www.ntu.edu.sg/home/ehchua/programming/opengl/CG_BasicsTheory.html
+	http://www.songho.ca/opengl/gl_transform.html
+	
+Operaçoes, funçoes
+	cross (produto vetorial)
+		https://en.wikipedia.org/wiki/Cross_product
+		http://www.euclideanspace.com/maths/algebra/vectors/vecAlgebra/cross/index.htm
+	dot
+		http://www.euclideanspace.com/maths/algebra/vectors/vecAlgebra/dot/index.htm
+	lookAt
+		https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluLookAt.xml
+		https://msdn.microsoft.com/en-us/library/windows/desktop/bb205342(v=vs.85).aspx
+		https://msdn.microsoft.com/en-us/library/windows/desktop/bb205343(v=vs.85).aspx
+		http://www.euclideanspace.com/maths/algebra/vectors/lookat
+	normalize
+		https://en.wikipedia.org/wiki/Unit_vector
+		http://www.wikihow.com/Normalize-a-Vector
+		https://www.khanacademy.org/computing/computer-programming/programming-natural-simulations/programming-vectors/a/vector-magnitude-normalization
+	project
+		https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluProject.xml
+	perspective
+		https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluPerspective.xml
+		https://msdn.microsoft.com/en-us/library/windows/desktop/bb205350(v=vs.85).aspx
+		https://msdn.microsoft.com/en-us/library/windows/desktop/bb205351(v=vs.85).aspx
+	quaternions
+		http://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/index.htm
+		http://www.euclideanspace.com/maths/algebra/vectors/angleBetween/index.htm
+	rotaçao
+		https://en.wikipedia.org/wiki/Rotation_matrix
+		https://pt.wikipedia.org/wiki/Matriz_de_rota%C3%A7%C3%A3o
+	http://www.euclideanspace.com/maths/algebra/vectors/vecAlgebra
+
+OpenGL
+	http://www.glprogramming.com/red
+	http://www.ntu.edu.sg/home/ehchua/programming/opengl/cg_basicstheory.html
+	https://www.opengl.org/archives/resources/faq/technical/transformations.htm
+	https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glFrustum.xml
+	https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glTranslate.xml
+	https://www.khronos.org/registry/OpenGL-Refpages/es2.0/xhtml/glViewport.xml
+	https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluLookAt.xml
+	https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluPerspective.xml
+	https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluProject.xml
+
+Mesa
+	https://www.mesa3d.org
+	https://mesa.freedesktop.org/archive
+
+DirectX
+	http://www.directxtutorial.com/Lesson.aspx?lessonid=9-4-5
+	https://msdn.microsoft.com/en-us/library/windows/desktop/bb173466(v=vs.85).aspx
+	https://msdn.microsoft.com/en-us/library/windows/desktop/bb205343(v=vs.85).aspx
+	https://msdn.microsoft.com/en-us/library/windows/desktop/bb206341(v=vs.85).aspx
+	https://msdn.microsoft.com/en-us/library/windows/desktop/bb147302(v=vs.85).aspx
+	https://msdn.microsoft.com/en-us/library/windows/desktop/bb205350(v=vs.85).aspx
+	https://msdn.microsoft.com/en-us/library/windows/desktop/bb205351(v=vs.85).aspx
+
+HTML5 Canvas
+	http://www.bucephalus.org/text/CanvasHandbook/CanvasHandbook.html
+
+Primitivas
+	https://en.wikipedia.org/wiki/Triangle_strip
+
+Bibliotecas
+	http://glmatrix.net
+
+Exemplos
+	http://www.sw-engineering-candies.com/snippets/webgl/hello-world
+
+https://www.ibm.com/developerworks/library/wa-webgl1
+https://www.ibm.com/developerworks/library/wa-webgl1/wa-webgl1-pdf.pdf
+http://www.informit.com/articles/article.aspx?p=2111395&seqNum=2
+http://www.corehtml5.com/trianglestripfundamentals.php
