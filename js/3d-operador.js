@@ -189,12 +189,10 @@ Operador3D.prototype.rotacionar= function (aMatriz, aAngulo, aVetor)
 		var sen= Math.sin (angulo);
 		var u= this.normalizar (aVetor);
 		var t= 1 - cos;
-
 		matrizRotacao[ 0]= cos + u[0]*u[0]*t;		matrizRotacao[ 1]= u[0]*u[1]*t - u[2]*sen;	matrizRotacao[ 2]= u[0]*u[2]*t + u[1]*sen;	matrizRotacao[ 3]= 0;
 		matrizRotacao[ 4]= u[1]*u[0]*t + u[2]*sen;	matrizRotacao[ 5]= cos + u[1]*u[1]*t;		matrizRotacao[ 6]= u[1]*u[2]*t - u[0]*sen;	matrizRotacao[ 7]= 0;
 		matrizRotacao[ 8]= u[2]*u[0]*t - u[1]*sen;	matrizRotacao[ 9]= u[2]*u[1]*t + u[0]*sen;	matrizRotacao[10]= cos + u[2]*u[2]*t;		matrizRotacao[15]= 0;
 		matrizRotacao[12]= 0;						matrizRotacao[13]= 0;						matrizRotacao[14]= 0;						matrizRotacao[15]= 1;
-
 		retorno= this.multiplicar (matrizRotacao, aMatriz);
 	}
 	return retorno;
