@@ -49,39 +49,6 @@ Operador3D.prototype.multiplicar= function (aMatrizA, aMatrizB)
 	return retorno;
 }
 
-/*Operador3D.prototype.multiplicar= function (aA, aB)
-
-{
-	var retorno= this.reservar (16);
-	var i00=  0, i01=  1, i02=	2, i03=	 3;
-	var i10=  4, i11=  5, i12=	6, i13=	 7;
-	var i20=  8, i21=  9, i22= 10, i23= 11;
-	var i30= 12, i31= 13, i32= 14, i33= 15;
-
-	
-	retorno[i00]= aA[i00]*aB[i00] + aA[i01]*aB[i10] + aA[i02]*aB[i20] + aA[i03]*aB[i30];
-	retorno[i01]= aA[i00]*aB[i01] + aA[i01]*aB[i11] + aA[i02]*aB[i21] + aA[i03]*aB[i31];
-	retorno[i02]= aA[i00]*aB[i02] + aA[i01]*aB[i12] + aA[i02]*aB[i22] + aA[i03]*aB[i32];
-	retorno[i03]= aA[i00]*aB[i03] + aA[i01]*aB[i13] + aA[i02]*aB[i23] + aA[i03]*aB[i33];
-
-	retorno[i10]= aA[i10]*aB[i00] + aA[i11]*aB[i10] + aA[i12]*aB[i20] + aA[i13]*aB[i30];
-	retorno[i11]= aA[i10]*aB[i01] + aA[i11]*aB[i11] + aA[i12]*aB[i21] + aA[i13]*aB[i31];
-	retorno[i12]= aA[i10]*aB[i02] + aA[i11]*aB[i12] + aA[i12]*aB[i22] + aA[i13]*aB[i32];
-	retorno[i13]= aA[i10]*aB[i03] + aA[i11]*aB[i13] + aA[i12]*aB[i23] + aA[i13]*aB[i33];
-
-	retorno[i20]= aA[i20]*aB[i00] + aA[i21]*aB[i10] + aA[i22]*aB[i20] + aA[i23]*aB[i30];
-	retorno[i21]= aA[i20]*aB[i01] + aA[i21]*aB[i11] + aA[i22]*aB[i21] + aA[i23]*aB[i31];
-	retorno[i22]= aA[i20]*aB[i02] + aA[i21]*aB[i12] + aA[i22]*aB[i22] + aA[i23]*aB[i32];
-	retorno[i23]= aA[i20]*aB[i03] + aA[i21]*aB[i13] + aA[i22]*aB[i23] + aA[i23]*aB[i33];
-
-	retorno[i30]= aA[i30]*aB[i00] + aA[i31]*aB[i10] + aA[i32]*aB[i20] + aA[i33]*aB[i30];
-	retorno[i31]= aA[i30]*aB[i01] + aA[i31]*aB[i11] + aA[i32]*aB[i21] + aA[i33]*aB[i31];
-	retorno[i32]= aA[i30]*aB[i02] + aA[i31]*aB[i12] + aA[i32]*aB[i22] + aA[i33]*aB[i32];
-	retorno[i33]= aA[i30]*aB[i03] + aA[i31]*aB[i13] + aA[i32]*aB[i23] + aA[i33]*aB[i33];
-
-	return retorno;
-}*/
-
 Operador3D.prototype.multiplicarPorVetor= function (aMatriz, aVetor)
 
 {
