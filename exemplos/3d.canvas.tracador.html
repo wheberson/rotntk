@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<!--
+	Copyright (c) 2017 Wheberson Migueletti - http://programacao.wheberson.com.br
+	Licensed under The MIT License - http://www.opensource.org/licenses/mit-license.php
+-->
+<html lang="pt-BR">
+	<head>
+		<title>Traçador de funçoes em 3D com HTML5 Canvas</title>
+		<meta charset="UTF-8" />
+		<style>
+			em {color:gray;font-size:small}
+			hr {margin:1em auto 1em}
+			input[type='text'] {width:7em;text-align:right}
+
+			#info {padding:1em;background-color:whitesmoke}
+			#infoTitulo {opacity:0.6;cursor:pointer;text-align:right}
+			#infoTitulo:hover {opacity:1}		
+			#infoGrafico {color:royalblue;margin:1em auto auto auto}
+
+			#dados {}
+			#vertices {}
+			#vertices table {border:solid 1px silver;min-width:250px}
+			#vertices table td {text-align:right;padding-left:2px;padding-right:2px;min-width:2em}
+			#vertices table th {text-align:right;background-color:whitesmoke}
+			#mensagem {width:auto;padding:1em}
+
+			#painelDominio, #painelQuadro, #painelExpressao {width:400px;padding:0.5em 1em 0.5em 1em;margin-bottom:1em;border:dotted 1px silver}
+			#painelDominio:after {content:'';clear:both;display:table}
+			#painelDominio div {margin-bottom:5px}
+			#painelDominio div:last-child {margin-bottom:auto}
+			#painelGrafico {margin-top:1em}
+			#painelGrafico label {margin-right:2em}
+
+			#painelQuadro:after {content:'';clear:both;display:table}
+
+			#dominioInicial, #dominioIntervalo, #dominioPontos {}
+			#dominioFinal, #dominioPontosTotal {margin-left:1em}
+
+			#expressao {width:90%;height:100px;margin-left:2em}
+			
+			#piValor {text-align:right;margin-top:5px}
+
+			#listagem {width:350px;padding:5px;background-color:#e6e6e6}
+			#listagemFuncoes {display:none}
+			#listagemTitulo {text-align:center;opacity:0.6;cursor:pointer}
+			#listagemTitulo:hover {opacity:1}
+
+			#painelCanvas {margin-right:1em}
+			#painelCanvas:after {content:'';clear:both;display:table}
+			#quadroCanvas {border:solid 1px silver;height:350px;width:100%}
+			#painelBotoes:after {content:'';clear:both;display:table}
+			#botaoCalcular {float:right}
+
+			.clear {clear:both}
+			.desloc {margin-left:1em}
+			.ok {color:green;font-weight:bold}
+			.erro {color:darkred;border:solid 2px darkred;padding:5px;background-color:white}
+			.erro i {font-size:larger;font-family:georgia;font-weight:bold}
+			.esquerda {float:left;margin-right:1em}
+			.formula {font-family:courier new;font-size:small;opacity:0.8;color:darkgreen}
+			.secao {float:left;margin:1em 1em 0.5em auto}
+			.titulo {display:block;margin-bottom:5px}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="../js/inicio.js"></script>
+		<script src="../js/calculadora.js"></script>
+		<script src="../js/2d-desenho.js"></script>
+		<script src="../js/3d-operador.js"></script>
+		<script src="../js/3d-tracador.canvas.js"></script>
+		<script>
+			var camera= {at: [0, 0, 0], eye: [0, 0, 3.5], up: [0, 1, 0]};
+			var clicou= false;
+			var posicao= [0, 0];
+			var rotacao= {usr: [0, 0, 0], mouse: [0, 0]};
+			var tracador= 0;
+			var vertices;
+
+			function atualizar ()
+
+			{
+				var inicio= parseFloat ($('#dominioInicial').val ());
+				var intervalo= parseFloat ($('#dominioIntervalo').val ());
+				var qtd= parseInt ($('#dominioPontos').val (), 10);
+				var final= inicio + intervalo*(qtd-1);
+				$('#dominioFinal').html (' <em>(ate <b>' + final + '</b>)</em>');
+				$('#dominioPontosTotal').html (' <em>(total <b>' + qtd*qtd + '</b>)</em>');
+			}
+
+			function atualizarInfoGrafico ()
+
+			{
+				var rotX= rotacao.usr[0] + rotacao.mouse[1];
+				var rotY= rotacao.usr[1] + rotacao.mouse[0];
+				var rotZ= rotacao.usr[2];
+				$('#infoGrafico').html ('Camera(' + camera.eye[0] + '; ' + camera.eye[1] + '; ' + camera.eye[2] + '); R(' + rotX + '&deg;; ' + rotY + '&deg;; ' + rotZ + '&deg;)');
+			}
+
+			function definir (aExpressao, aInicio, aIntervalo, aPontos)
+
+			{
+				$('#expressao').val (aExpressao.trim ());
+				$('#dominioInicial').val (parseFloat (aInicio));
+				$('#dominioIntervalo').val (parseFloat (aIntervalo));
+				$('#dominioPontos').val (parseInt (aPontos, 10));
+				atualizar ();
+			}
+
+			function calcular ()
+
+			{
+				if ($('#expressao').val () != '') {
+					var quadro= document.getElementById ('quadroCanvas');
+					var quadroX= $('#quadroCanvas').width ();
+					var quadroY= parseInt ($.trim ($('#quadroY').val ()), 10);
+					quadroY= (quadroY > 200) && (!isNaN (quadroY)) ? quadroY : 200;
+					quadro.width= quadroX;
+					quadro.style.width= quadroX + 'px';
+					quadro.height= quadroY;
+					quadro.style.height= quadroY + 'px';
+					$('#quadroY').val (quadroY);
+					$('#mensagem').html (CalcularExpressao (
+						$('#expressao').val (), 
+						$('#dominioInicial').val (), 
+						$('#dominioIntervalo').val (),
+						$('#dominioPontos').val ()
+					));
+				}
+			}
+
+			function CalcularExpressao (aValor, aXI,  aIntervalo, aPontos)
+
+			{
+				tracador= new Tracador3DCanvas (aValor, aXI, aIntervalo, aPontos, 'dodgerblue');
+				var Retorno= tracador.erro;
+				if (Retorno == '') {
+					vertices= tracador.calcular ();
+
+					var l= '';
+					for (var j= 0; j < vertices.length; j++)
+						l+= '<tr><td>#' + parseInt (j+1, 10) + '</td><td>' + vertices[j].x + '</td><td>' + vertices[j].y + '</td><td>' + vertices[j].z + '</td></tr>';
+					if (l != '')
+						l= '<table><tr><th>ponto</th><th>x</th><th>y</th><th>f(x, y)</th></tr>' + l + '</table>';
+					$('#vertices').html (l);
+
+					encenar ();
+				}
+				if (Retorno != '')
+					Retorno= '<span class="erro">' + Retorno + '</span>';
+				return Retorno;
+			}
+
+			function encenar ()
+
+			{
+				var rotX= rotacao.usr[0] + rotacao.mouse[1];
+				var rotY= rotacao.usr[1] + rotacao.mouse[0];
+				var rotZ= rotacao.usr[2];
+				tracador.tracar (document.getElementById ('quadroCanvas'), vertices, camera.eye, [rotX, rotY, rotZ]);
+				window.requestAnimationFrame (encenar);
+			}
+
+			function navegar (aDirecao)
+
+			{
+				var incremento= 0.5;
+				switch (aDirecao) {
+					case 'frente'  : camera.eye[2]-= camera.eye[2] > 0 ? incremento : 0; break;
+					case 'esquerda': camera.eye[0]-= incremento; break;
+					case 'direita' : camera.eye[0]+= incremento; break;
+					case 'tras'    : camera.eye[2]+= incremento; break;
+				}
+				atualizarInfoGrafico ();
+			}
+
+			function redimensionar ()
+
+			{
+				if (tracador)
+					tracador.redimensionar ($('#quadroCanvas').width (), $('#quadroCanvas').height ());
+			}
+
+			function rotacionar (aDirecao)
+
+			{
+				var incremento= 10;
+				switch (aDirecao) {
+					case 'x+': rotacao.usr[0]+= incremento; break;
+					case 'x-': rotacao.usr[0]-= incremento; break;
+					case 'y+': rotacao.usr[1]+= incremento; break;
+					case 'y-': rotacao.usr[1]-= incremento; break;
+					case 'z+': rotacao.usr[2]+= incremento; break;
+					case 'z-': rotacao.usr[2]-= incremento; break;
+				}
+				atualizarInfoGrafico ();
+			}
+
+			function aoCarregar ()
+
+			{
+				$('#piValor').html ('&pi; = ' + Math.PI + '<br />e = ' + Math.E + '<br />&infin; = ' + Number.MAX_VALUE);
+				$('#quadroY').val (350);
+				$('#GraficoCanvas').prop ('checked', true);
+				definir ('x*x*x*y - x*y*y*y', -1, 0.05, 50);
+				calcular ();
+				atualizarInfoGrafico ();
+
+				$('#botaoCalcular').click (
+					function ()
+
+					{
+						calcular ();
+						atualizarInfoGrafico ();
+					}
+				);
+
+				$('#botaoDireita').click (
+					function ()
+
+					{
+						navegar ('direita');
+					}
+				);
+
+				$('#botaoEsquerda').click (
+					function ()
+
+					{
+						navegar ('esquerda');
+					}
+				);
+
+				$('#botaoFrente').click (
+					function ()
+
+					{
+						navegar ('frente');
+					}
+				);
+
+				$('#botaoRotacionarXPos').click (
+					function ()
+
+					{
+						rotacionar ('x+');
+					}
+				);
+
+				$('#botaoRotacionarXNeg').click (
+					function ()
+
+					{
+						rotacionar ('x-');
+					}
+				);
+
+				$('#botaoRotacionarYPos').click (
+					function ()
+
+					{
+						rotacionar ('y+');
+					}
+				);
+
+				$('#botaoRotacionarYNeg').click (
+					function ()
+
+					{
+						rotacionar ('y-');
+					}
+				);
+
+				$('#botaoRotacionarZPos').click (
+					function ()
+
+					{
+						rotacionar ('z+');
+					}
+				);
+
+				$('#botaoRotacionarZNeg').click (
+					function ()
+
+					{
+						rotacionar ('z-');
+					}
+				);
+
+				$('#botaoTras').click (
+					function ()
+
+					{
+						navegar ('tras');
+					}
+				);
+
+				$('.dominio').keyup (
+					function ()
+
+					{
+						atualizar ();
+					}
+				);
+
+				$('#infoTitulo').click (
+					function ()
+
+					{
+						$('#infoConteudo').toggle ();
+					}
+				);
+
+				$('#listagemTitulo').click (
+					function ()
+
+					{
+						if ($('#listagemFuncoes').html () == '') {
+							var F= '';
+							var PropriedadesMath= new Calculadora ('', '').obterMembrosMath (true, true);
+
+							for (var I= 0; I < PropriedadesMath.length; I++)
+								F+= '<li>' + PropriedadesMath[I] + '</li>';
+
+							$('#listagemFuncoes').html (F == '' ? '' : '<ul>' + F + '</ul>');
+						}
+						$('#listagemFuncoes').toggle ();
+					}
+				);
+
+				$('#predefinidas').change (
+					function ()
+
+					{
+						var C= ['', -1, 0.05, 50];
+						if ($(this).val () != '')
+							C= $(this).val ().split (';');
+						definir (C[0], C[1], C[2], C[3]);
+						calcular ();
+					}
+				);
+
+				$('#quadroCanvas').mousedown (
+					function (aEvent)
+
+					{
+						clicou= true;
+						posicao= [aEvent.clientX, aEvent.clientY];
+					}
+				);
+
+				$(document).mouseup (
+					function ()
+
+					{
+						clicou= false;
+						posicao= [0, 0];
+						rotacao.mouse= [0, 0];
+						atualizarInfoGrafico ();
+					}
+				);
+
+				$('#quadroCanvas').mousemove (
+					function (aEvent)
+
+					{
+						if (clicou) {
+							rotacao.mouse= [aEvent.clientX - posicao[0], aEvent.clientY - posicao[1]];
+							atualizarInfoGrafico ();
+						}
+					}
+				);
+
+				$(window).resize (
+					function ()
+
+					{
+						redimensionar ();
+					}
+				);
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Traçador de funçoes em 3D com HTML5 Canvas</h1>
+		<div id="info">
+			<div id="infoTitulo">Info <sub>&varr;</sub></div>
+			<div id="infoConteudo">
+				<p>Traçar funçoes do tipo <span class="formula">z = f(x, y)</span> no plano.
+				Ex.: <span class="formula">sin(x*y) + 0.5</span></p>
+				<p>Pode-se usar dentro da expressao qualquer funçao <em>(ou constante)</em> do objeto <q>Math</q> do JavaScript.
+				Refs.: <a href="https://developer.mozilla.org/pt-BR/docs/Web/JavaScript/Reference/Global_Objects/Math" target="_blank">MDN Mozilla</a>, <a href="http://www.w3schools.com/jsref/jsref_obj_math.asp" target="_blank">w3schools.com</a>.
+				Ex.: <span class="formula">sin(x+0.025) + (E*PI*Random ())</span></p>
+				<p>A constante <q>pi</q> pode ser escrita usando as letras &#960; ou &#928; tambem.
+				Ex.: <span class="formula">cos(x*&#960;) + y*sin(&#928;/2)</span></p>
+				<p>Exemplos de funçoes 3D: <a href="http://www.fractarte.com.br/wolframalpha/3d-equations.php" target="_blank">Fractarte</a>.</p>
+				<div id="listagem">
+					<div id="listagemTitulo">Listar funçoes e constantes do <q>Math</q> do JavaScript <sub>&varr;</sub></div>
+					<div id="listagemFuncoes"></div>
+				</div>
+			</div>
+			<p>Para rotacionar o grafico clique nele e movimente o mouse.</p>
+			<div id="infoGrafico"></div>
+		</div>
+		<div id="dados" class="secao">
+			<div id="painelDominio">Dominio (x, y)
+				<div class="desloc">
+					<div>
+						<label>De</label>
+							<input id="dominioInicial" name="dominioInicial" class="dominio real" type="text" />
+						<span id="dominioFinal"></span>
+					</div>
+					<div class="esquerda">
+						<label class="titulo">Intervalo entre pontos</label>
+							<input id="dominioIntervalo" name="dominioIntervalo" class="dominio real-positivo desloc" type="text" />
+					</div>
+					<div class="esquerda">
+						<label class="titulo">Qtde de pontos no dominio</label>
+							<input id="dominioPontos" name="dominioPontos" class="dominio inteiro-positivo desloc" type="text" />
+						<span id="dominioPontosTotal"></span>
+					</div>
+				</div>
+			</div>
+			<div id="painelQuadro">
+				<div class="esquerda">
+					<label class="titulo">Quadro altura</label>
+						<input id="quadroY" name="quadroY" class="inteiro-positivo desloc" type="text" />
+				</div>
+			</div>
+			<div id="painelExpressao">
+				<div>
+					<label class="titulo">z = f(x, y) <em>(digitar apenas a funçao <i>f(x, y)</i>)</em></label>
+						<textarea id="expressao" name="expressao"></textarea>
+				</div>
+				<div>
+					<label class="titulo">Funçoes de exemplo</label>
+						<select id="predefinidas" class="desloc">
+							<option value="">Escolha uma funçao de exemplo</option>
+							<option value="x*x*x*y - x*y*y*y;-1;0.05;50">x&sup3;y + xy&sup3;</option>
+							<option value="x*x + y*y;-1;0.05;50">x&sup2; + y&sup2;</option>
+							<option value="sqrt(x*x + y*y);-1;0.05;50">sqrt(x&sup2; + y&sup2;)</option>
+							<option value="1-abs(x+y)-abs(y-x);-1;0.05;50">1-abs(x+y)-abs(y-x)</option>
+							<option value="sin(x) + y/10;-1;0.05;50">sin(x) + y/10</option>
+							<option value="sin(x*y);-1;0.05;50">sin(xy)</option>
+							<option value="sin(x*x + y*y);-1;0.05;50">sin(x&sup2; + y&sup2;)</option>
+							<option value="sin(x*x + y*y)/2;-1;0.05;50">sin(x&sup2; + y&sup2;)/2</option>
+							<option value="sin(2*(x*x + y*y))/2;-1;0.05;50">sin(2(x&sup2; + y&sup2;))/2</option>
+							<option value="exp(sin(x+cos(y)));-1;0.05;50">exp(sin(x+cos(y)))</option>
+							<option value="log(x*x) + log(y*y);-1;0.05;50">log(x&sup2;) + log(y&sup2;)</option>
+						</select>
+				</div>
+				<div id="piValor"></div>
+			</div>
+		</div>
+		<div id="painelCanvas" class="secao">
+			<canvas id="quadroCanvas"></canvas>
+			<div id="painelBotoes">
+				<input id="botaoEsquerda" type="button" value="&larr;" title="Move camera pra esquerda" />
+				<input id="botaoFrente" type="button" value="&uarr;" title="Move camera pra frente" />
+				<input id="botaoTras" type="button" value="&darr;" title="Move camera pra tras" />
+				<input id="botaoDireita" type="button" value="&rarr;" title="Move camera pra direita" />
+				<input id="botaoRotacionarXPos" type="button" value="+10&deg; &varr;" title="Rotacionar em X" />
+				<input id="botaoRotacionarXNeg" type="button" value="-10&deg; &varr;" title="Rotacionar em X" />
+				<input id="botaoRotacionarYPos" type="button" value="+10&deg; &harr;" title="Rotacionar em Y" />
+				<input id="botaoRotacionarYNeg" type="button" value="-10&deg; &harr;" title="Rotacionar em Y" />
+				<input id="botaoRotacionarZPos" type="button" value="+10&deg; &olarr;" title="Rotacionar em Z" />
+				<input id="botaoRotacionarZNeg" type="button" value="-10&deg; &orarr;" title="Rotacionar em Z" />
+				<input id="botaoCalcular" type="button" value="Traçar" title="Esboça o grafico 3D da expressao z = f(x, y)" />
+			</div>
+		</div>
+		<div id="vertices"></div>
+		<div id="mensagem"></div>
+	</body>
+</html>

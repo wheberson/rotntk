@@ -15,6 +15,7 @@ Model, world, view (camera), projection, viewport, transformaçoes:
 	https://msdn.microsoft.com/en-us/library/windows/desktop/bb206269(v=vs.85).aspx
 	https://www.ntu.edu.sg/home/ehchua/programming/opengl/CG_BasicsTheory.html
 	http://www.songho.ca/opengl/gl_transform.html
+	https://www.scratchapixel.com/lessons/3d-basic-rendering/transforming-objects-using-matrices
 	
 Operaçoes, funçoes
 	cross (produto vetorial)
@@ -45,10 +46,21 @@ Operaçoes, funçoes
 		https://pt.wikipedia.org/wiki/Matriz_de_rota%C3%A7%C3%A3o
 	http://www.euclideanspace.com/maths/algebra/vectors/vecAlgebra
 
+WebGL
+	https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API/Tutorial/Getting_started_with_WebGL
+	https://www.ibm.com/developerworks/library/wa-webgl1
+	https://www.ibm.com/developerworks/library/wa-webgl1/wa-webgl1-pdf.pdf
+	http://www.informit.com/articles/article.aspx?p=2111395&seqNum=2
+	https://www.tutorialspoint.com/webgl/webgl_colors.htm
+	http://learningwebgl.com/blog/?p=134
+	http://www.corehtml5.com/trianglestripfundamentals.php
+
 OpenGL
 	http://www.glprogramming.com/red
 	http://www.ntu.edu.sg/home/ehchua/programming/opengl/cg_basicstheory.html
 	https://www.opengl.org/archives/resources/faq/technical/transformations.htm
+	https://www.khronos.org/registry/OpenGL/specs/gl/glspec21.pdf
+	https://www.khronos.org/registry/OpenGL-Refpages
 	https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glFrustum.xml
 	https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/glTranslate.xml
 	https://www.khronos.org/registry/OpenGL-Refpages/es2.0/xhtml/glViewport.xml
@@ -81,8 +93,3 @@ Bibliotecas
 Exemplos
 	http://www.fractarte.com.br/wolframalpha/3d-equations.php
 	http://www.sw-engineering-candies.com/snippets/webgl/hello-world
-
-https://www.ibm.com/developerworks/library/wa-webgl1
-https://www.ibm.com/developerworks/library/wa-webgl1/wa-webgl1-pdf.pdf
-http://www.informit.com/articles/article.aspx?p=2111395&seqNum=2
-http://www.corehtml5.com/trianglestripfundamentals.php

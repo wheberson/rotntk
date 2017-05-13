@@ -75,31 +75,31 @@
 				// Piramide 1
 					var matrizPiramide= operador.obterIdentidade ();
 					matrizPiramide= operador.rotacionar (matrizPiramide, 45, [0, 1, 0]);
-					matrizPiramide= operador.transladar (matrizPiramide, [0, 1.5, 0]);
+					matrizPiramide= operador.transladar (matrizPiramide, [0, 1.25, 0]);
 					matrizPiramide= operador.escalar (matrizPiramide, [0.5, 0.5, 0.5]);
-					
-					matrizPiramide= operador.multiplicar (matrizWorld, matrizPiramide);
-					matrizPiramide= operador.multiplicar (matrizView, matrizPiramide);
-					matrizPiramide= operador.multiplicar (matrizProjection, matrizPiramide);
+
+					matrizPiramide= operador.multiplicar (matrizPiramide, matrizWorld);
+					matrizPiramide= operador.multiplicar (matrizPiramide, matrizView);
+					matrizPiramide= operador.multiplicar (matrizPiramide, matrizProjection);
 					desenhar (vertices3DPiramide, matrizPiramide);
 
 				// Piramide 2
 					var matrizPiramide= operador.obterIdentidade ();
 					matrizPiramide= operador.transladar (matrizPiramide, [0, 0.5, 0]);
-					matrizPiramide= operador.escalar (matrizPiramide, [0.5, 0.5, 0.5]);
+					matrizPiramide= operador.escalar (matrizPiramide, [0.75, 0.75, 0.75]);
 
-					matrizPiramide= operador.multiplicar (matrizWorld, matrizPiramide);
-					matrizPiramide= operador.multiplicar (matrizView, matrizPiramide);
-					matrizPiramide= operador.multiplicar (matrizProjection, matrizPiramide);
+					matrizPiramide= operador.multiplicar (matrizPiramide, matrizWorld);
+					matrizPiramide= operador.multiplicar (matrizPiramide, matrizView);
+					matrizPiramide= operador.multiplicar (matrizPiramide, matrizProjection);
 					desenhar (vertices3DPiramide, matrizPiramide);
 
 				// Cubo
 					var matrizCubo= operador.obterIdentidade ();
-					matrizCubo= operador.escalar (matrizCubo, [0.25, 0.25, 0.25]);
+					matrizCubo= operador.escalar (matrizCubo, [0.5, 0.5, 0.5]);
 
-					matrizCubo= operador.multiplicar (matrizWorld, matrizCubo);
-					matrizCubo= operador.multiplicar (matrizView, matrizCubo);
-					matrizCubo= operador.multiplicar (matrizProjection, matrizCubo);
+					matrizCubo= operador.multiplicar (matrizCubo, matrizWorld);
+					matrizCubo= operador.multiplicar (matrizCubo, matrizView);
+					matrizCubo= operador.multiplicar (matrizCubo, matrizProjection);
 					desenhar (vertices3DCubo, matrizCubo);
 
 				window.requestAnimationFrame (encenar);
@@ -168,7 +168,7 @@
 				$('#viewport').html ('Viewport: [' + desenho.viewport[0] + '; ' + desenho.viewport[1] + '; ' + desenho.viewport[2] + '; ' + desenho.viewport[3] + ']');
 				var angulo= 45;
 				var proporcao= desenho.viewport[2]/desenho.viewport[3];
-				matrizProjection= operador.obterPerspectiva (angulo, proporcao, 0.1, 100.0);
+				matrizProjection= operador.obterPerspectiva (angulo, proporcao, 1, 100.0);
 			}
 
 			function aoCarregar ()

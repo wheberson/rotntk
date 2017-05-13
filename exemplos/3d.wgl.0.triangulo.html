@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<!--
+	Copyright (c) 2017 Wheberson Migueletti - http://programacao.wheberson.com.br
+	Licensed under The MIT License - http://www.opensource.org/licenses/mit-license.php
+-->
+<html lang="pt-BR">
+	<head>
+		<title>WebGL - 3D - Exemplo 0 - Triangulo</title>
+		<meta charset="UTF-8" />
+		<style>
+			.secao {margin:1em 1em 0.5em auto}
+
+			#quadroCanvas {margin-right:1em;border:solid 1px silver}
+
+			#info {padding:1em;background-color:whitesmoke}
+			#infoTitulo {opacity:0.6;cursor:pointer;text-align:right}
+			#infoTitulo:hover {opacity:1}
+		</style>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+		<script src="../js/inicio.js"></script>
+		<script src="../js/3d-operador.js"></script>
+		<script src="../js/wgl.js"></script>
+		<script>
+			var camera= {at: [0, 0, 0], eye: [0, 0, 3], up: [0, 1, 0]};
+			var operador= new Operador3D ();
+			var wgl= new WebGL ();
+
+			function desenhar (aMatriz)
+
+			{
+				var gl= wgl.rc;
+				if (gl) {
+					// Limpar
+						gl.clearColor (1.0, 1.0, 1.0, 1.0);
+						gl.enable (gl.DEPTH_TEST);
+						gl.viewport (0, 0, wgl.canvas.width, wgl.canvas.height);
+						gl.clear (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+					// Preparar
+						gl.useProgram (wgl.shaderProgram);
+						wgl.selecionarBuffer ('vertices');
+						wgl.selecionarBuffer ('cores');
+						gl.uniformMatrix4fv (gl.getUniformLocation (wgl.shaderProgram, 'matriz'), false, aMatriz);
+
+					// Desenhar
+						gl.drawArrays (gl.LINE_STRIP, 0, 4);
+				}
+				if (wgl.erro != '')
+					alert ('Erro: ' + wgl.erro);
+			}
+
+			function encenar ()
+
+			{
+				// World
+					var matrizWorld= operador.obterIdentidade ();
+
+				// View
+					var matrizView= operador.olharPara (camera.eye, camera.at, camera.up);
+
+				// Projection
+					var matrizProjection= operador.obterPerspectiva (45, wgl.canvas.width/wgl.canvas.height, 1, 100);
+
+				// Triangulo
+					var matrizTriangulo= operador.obterIdentidade ();
+					matrizTriangulo= operador.multiplicar (matrizTriangulo, matrizWorld);
+					matrizTriangulo= operador.multiplicar (matrizTriangulo, matrizView);
+					matrizTriangulo= operador.multiplicar (matrizTriangulo, matrizProjection);
+
+				desenhar (matrizTriangulo);
+			}
+
+			function inicializar (aQuadro)
+
+			{
+				if (!wgl.configurar (aQuadro, true))
+					alert ('[1] Erro: ' + wgl.erro);
+				else
+					try {
+						montar ();
+						encenar ();
+					}
+					catch (e) {
+						alert ('[2] Erro: ' + e);
+					}
+			}
+
+			function montar ()
+
+			{
+				var vertices3D= new Float32Array ([
+					-0.5, -1, 1, // esquerda, embaixo
+					-0.5,  1, 1, // esquerda, encima
+					   0, -1, 1, // direita, embaixo
+					-0.5, -1, 1, // esquerda, embaixo
+				]);
+
+				var cores= new Float32Array ([
+					1.0,  0.0,  0.0,  1.0, // vertice 0: red
+					0.0,  1.0,  0.0,  1.0, // vertice 1: green
+					0.0,  0.0,  1.0,  1.0, // vertice 2: blue
+					1.0,  1.0,  0.0,  1.0, // vertice 3: yellow
+				]);
+
+				if (wgl.rc) {
+					wgl.reservarBuffer ('vertices', vertices3D);
+					wgl.reservarBuffer ('cores', cores);
+				}
+			}
+
+			function aoCarregar ()
+
+			{
+				$('#infoTitulo').click (
+					function ()
+
+					{
+						$('#infoConteudo').toggle ();
+					}
+				);
+
+				inicializar (document.getElementById ('quadroCanvas'));
+			}
+		</script>
+	</head>
+	<body>
+		<h1>WebGL - 3D - Exemplo 0 - Triangulo</h1>
+		<div id="info">
+			<div id="infoTitulo">Info <sub>&varr;</sub></div>
+			<div id="infoConteudo">
+				<p>Triangulo desenhado em ambiente 3D utilizando o <a href="https://pt.wikipedia.org/wiki/WebGL" target="_blank">WebGL</a>.</p>
+			</div>
+		</div>
+		<div class="secao">
+			<canvas id="quadroCanvas" width="400" height="400"></canvas>
+		</div>
+	</body>
+</html>

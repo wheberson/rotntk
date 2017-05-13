@@ -5,7 +5,7 @@
 -->
 <html lang="pt-BR">
 	<head>
-		<title>HTML5 Canvas - 3D - Exemplo 1 - Tetraedro</title>
+		<title>WebGL - 3D - Exemplo 1 - Tetraedro</title>
 		<meta charset="UTF-8" />
 		<style>
 			.secao {margin:1em 1em 0.5em auto}
@@ -18,17 +18,17 @@
 		</style>
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script src="../js/inicio.js"></script>
-		<script src="../js/2d-desenho.js"></script>
 		<script src="../js/3d-operador.js"></script>
+		<script src="../js/wgl.js"></script>
 		<script>
-			var camera= {at: [0, 0, 0], eye: [0, 0, 5], up: [0, 1, 0]};
+			var camera= {at: [0, 0, 0], eye: [0, 0, 3], up: [0, 1, 0]};
 			var clicou= false;
-			var desenho;
 			var matrizProjection;
-			var operador;
+			var operador= new Operador3D ();
 			var posicao= [0, 0];
+			var qtdVertices3D= 0;
 			var rotacao= [0, 0];
-			var vertices3D;
+			var wgl= new WebGL ();
 
 			function atualizar ()
 
@@ -36,33 +36,34 @@
 				$('#posicao').html ('R(' + rotacao[1] + '; ' + rotacao[0] + '); P(' + posicao[0] + '; ' + posicao[1] + ')');
 			}
 
-			function desenhar (aVertices3D, aMatriz)
+			function desenhar (aMatriz, aLimpa)
 
 			{
-				var vertices2D= new Array (aVertices3D.length/3);
-
-				var n= aVertices3D.length;
-				var c= 0, i= 0, j= 0;
-				var cores= ['red', 'green', 'blue', 'gold', 'black', 'magenta'];
-				var nCores= cores.length;
-
-				// Transforma cada vertice 3D em coordenadas de dispositivo 2D
-					while (i < n) {
-						var coord= operador.visualizar (aMatriz, [aVertices3D[i++], aVertices3D[i++], aVertices3D[i++], 1.0]);
-						vertices2D[j++]= {ponto: desenho.visualizar (coord), cor: cores[c]};
-						if (i % 3 == 0)
-							c+= c < nCores ? 1 : 0;
+				var gl= wgl.rc;
+				if (gl) {
+					if (aLimpa) {
+						gl.clearColor (1.0, 1.0, 1.0, 1.0);
+						gl.enable (gl.DEPTH_TEST);
+						gl.depthFunc (gl.LEQUAL);
+						gl.viewport (wgl.viewport[0], wgl.viewport[1], wgl.viewport[2], wgl.viewport[3]);
+						gl.clear (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 					}
 
-				desenho.desenhar (vertices2D);
+					gl.useProgram (wgl.shaderProgram);
+					wgl.selecionarBuffer ('vertices');
+					wgl.selecionarBuffer ('cores');
+					gl.uniformMatrix4fv (gl.getUniformLocation (wgl.shaderProgram, 'matriz'), false, aMatriz);
+
+					gl.drawArrays (gl.TRIANGLE_STRIP, 0, qtdVertices3D/3);
+				}
+				if (wgl.erro != '')
+					alert ('Erro: ' + wgl.erro);
 			}
 
 			function encenar ()
 
 			{
 				var rotacaoDefault= [30, -30];
-
-				desenho.limpar ();
 
 				// World
 					var matrizWorld= operador.obterIdentidade ();
@@ -78,7 +79,7 @@
 					matrizTetraedro= operador.multiplicar (matrizTetraedro, matrizView);
 					matrizTetraedro= operador.multiplicar (matrizTetraedro, matrizProjection);
 
-				desenhar (vertices3D, matrizTetraedro);
+				desenhar (matrizTetraedro, true);
 
 				window.requestAnimationFrame (encenar);
 			}
@@ -86,35 +87,55 @@
 			function inicializar (aQuadro)
 
 			{
-				desenho= new Desenho2D (aQuadro, [0, 0, aQuadro.width, aQuadro.height]);
-				operador= new Operador3D ();
-				montar ();
-				redimensionar ();
-				encenar ();
+				if (!wgl.configurar (aQuadro, true, [0, 0, aQuadro.width, aQuadro.height]))
+					alert ('[1] Erro: ' + wgl.erro);
+				else
+					try {
+						montar ();
+						redimensionar ();
+						encenar ();
+					}
+					catch (e) {
+						alert ('[2] Erro: ' + e);
+					}
 			}
 
 			function montar ()
 
 			{
-				vertices3D= [
-					0, 0, 0,
-					0, 0, 1, 
-					1, 0, 0,
-					0, 1, 0,
-					0, 0, 0,
-				];
+				var vertices3D= new Float32Array ([
+					0, 0, 0, // vertice 0
+					0, 0, 1, // vertice 1
+					1, 0, 0, // vertice 2
+					0, 1, 0, // vertice 3
+					0, 0, 0, // vertice 4
+				]);
+				qtdVertices3D= vertices3D.length;
+
+				var cores= new Float32Array ([
+					1.0,  0.0,  0.0,  1.0, // vertice 0: red
+					0.0,  1.0,  0.0,  1.0, // vertice 1: green
+					0.0,  0.0,  1.0,  1.0, // vertice 2: blue
+					1.0,  1.0,  0.0,  1.0, // vertice 3: yellow
+					0.0,  1.0,  1.0,  1.0, // vertice 4: cyan
+				]);
+
+				if (wgl.rc) {
+					wgl.reservarBuffer ('vertices', vertices3D);
+					wgl.reservarBuffer ('cores', cores);
+				}
 			}
 
 			function redimensionar ()
 
 			{
-				desenho.quadro.width= $('#quadroCanvas').width ();
-				desenho.quadro.height= $('#quadroCanvas').height ();
-				desenho.viewport[2]= desenho.quadro.width;
-				desenho.viewport[3]= desenho.quadro.height;
-				$('#viewport').html ('Viewport: [' + desenho.viewport[0] + '; ' + desenho.viewport[1] + '; ' + desenho.viewport[2] + '; ' + desenho.viewport[3] + ']');
+				wgl.canvas.width= $('#quadroCanvas').width ();
+				wgl.canvas.height= $('#quadroCanvas').height ();
+				wgl.viewport[2]= wgl.canvas.width;
+				wgl.viewport[3]= wgl.canvas.height;
+				$('#viewport').html ('Viewport: [' + wgl.viewport[0] + '; ' + wgl.viewport[1] + '; ' + wgl.viewport[2] + '; ' + wgl.viewport[3] + ']');
 				var angulo= 45;
-				var proporcao= desenho.viewport[2]/desenho.viewport[3];
+				var proporcao= wgl.viewport[2]/wgl.viewport[3];
 				matrizProjection= operador.obterPerspectiva (angulo, proporcao, 1, 100.0);
 			}
 
@@ -174,9 +195,9 @@
 		</script>
 	</head>
 	<body>
-		<h1>HTML5 Canvas - 3D - Exemplo 1 - Tetraedro</h1>
+		<h1>WebGL - 3D - Exemplo 1 - Tetraedro</h1>
 		<div id="info">
-			<div id="infoTitulo">Info <sub>&#8597;</sub></div>
+			<div id="infoTitulo">Info <sub>&varr;</sub></div>
 			<div id="infoConteudo">
 				<p>Para rotacionar o objeto clique nele e movimente o mouse.</p>
 				<div id="viewport"></div>
