@@ -8,8 +8,10 @@ function WebGL ()
 	this.canvas= 0;
 	this.erro= '';
 	this.rc= 0;
-	this.shaderPadrao= ['vec4 (shaderVertexPosition, 1.0)', 'vec4 (1.0, 1.0, 1.0, 1.0)'];
 	this.shaderProgram= 0;
+	this.viewport= [0, 0, 0, 0];
+	this.buffers= [];
+	this.attributes= [];
 
 	this.carregarShader= function (aVertex)
 
@@ -18,16 +20,17 @@ function WebGL ()
 		if (typeof this.aoCarregarShader == 'function')
 			retorno= this.aoCarregarShader (aVertex);
 		else if (aVertex)
-			retorno= 'attribute vec3 shaderVertexPosition; void main () {gl_Position= ' + this.shaderPadrao[0] + ';}';
+			retorno= 'attribute vec3 shaderVertexPosition; attribute vec4 shaderVertexColor; uniform mat4 matriz; varying lowp vec4 cor; void main (void) {gl_Position= matriz * vec4(shaderVertexPosition, 1.0); cor= shaderVertexColor;}';
 		else
-			retorno= 'void main () {gl_FragColor= ' + this.shaderPadrao[1] + ';}';
+			retorno= 'varying lowp vec4 cor; void main (void) {gl_FragColor= cor;}';
 		return retorno;
 	}
 
-	this.configurar= function (aCanvas, aConfiguraAutomaticamente)
+	this.configurar= function (aCanvas, aConfiguraAutomaticamente, aViewport)
 
 	{
 		this.canvas= aCanvas;
+		this.viewport= aViewport;
 		var retorno= false;
 		try {
 			this.rc= aCanvas.getContext ('webgl') || aCanvas.getContext ('experimental-webgl') || aCanvas.getContext ('webkit-3d') || aCanvas.getContext ('moz-webgl');
@@ -76,14 +79,37 @@ function WebGL ()
 		}
 	}
 
-	this.obterAttribLocation= function (aNome)
+	this.obterAttribLocation= function (aTipo, aNome)
 
 	{
 		var retorno= 0;
 		if (this.rc && this.shaderProgram) {
-			retorno= this.rc.getAttribLocation (this.shaderProgram, aNome ? aNome : 'shaderVertexPosition');
+			var b= !aTipo || (aTipo == 'vertices') ? 0 : 1;
+			this.rc.bindBuffer (this.rc.ARRAY_BUFFER, this.buffers[b]);
+			retorno= this.rc.getAttribLocation (this.shaderProgram, aNome ? aNome : (b == 0 ? 'shaderVertexPosition' : 'shaderVertexColor'));
 			this.rc.enableVertexAttribArray (retorno);
 		}
 		return retorno;
+	}
+
+	this.reservarBuffer= function (aTipo, aVertices)
+
+	{
+		if (this.rc) {
+			var b= !aTipo || (aTipo == 'vertices') ? 0 : 1;
+			this.buffers[b]= this.rc.createBuffer ();
+			this.attributes[b]= this.obterAttribLocation (aTipo);
+			this.rc.bufferData (this.rc.ARRAY_BUFFER, aVertices, this.rc.STATIC_DRAW);
+		}
+	}
+
+	this.selecionarBuffer= function (aTipo)
+
+	{
+		if (this.rc) {
+			var b= !aTipo || (aTipo == 'vertices') ? 0 : 1;
+			this.rc.bindBuffer (this.rc.ARRAY_BUFFER, this.buffers[b]);
+			this.rc.vertexAttribPointer (this.attributes[b], (b == 0) ? 3 : 4, this.rc.FLOAT, false, 0, 0);
+		}
 	}
 }

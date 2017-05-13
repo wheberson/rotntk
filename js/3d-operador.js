@@ -29,14 +29,27 @@ Operador3D.prototype.cross= function (aU, aV)
 Operador3D.prototype.escalar= function (aMatriz, aVetor)
 
 {
-	var matrizTranslacao= this.obterIdentidade ();
-	matrizTranslacao[ 0]= aVetor[0];
-	matrizTranslacao[ 5]= aVetor[1];
-	matrizTranslacao[10]= aVetor[2];
-	return this.multiplicar (matrizTranslacao, aMatriz);
+	var m= this.obterIdentidade ();
+	m[ 0]= aVetor[0];
+	m[ 5]= aVetor[1];
+	m[10]= aVetor[2];
+	return this.multiplicar (m, aMatriz);
 }
 
-Operador3D.prototype.multiplicar= function (aA, aB)
+Operador3D.prototype.multiplicar= function (aMatrizA, aMatrizB)
+
+{
+	var retorno= this.reservar (16);
+	for (var i= 0; i < 4; i++)
+		for (var j= 0; j < 4; j++)
+			retorno[i*4 + j]= 	aMatrizA[i*4 + 0]*aMatrizB[0*4 + j] + 
+								aMatrizA[i*4 + 1]*aMatrizB[1*4 + j] +
+								aMatrizA[i*4 + 2]*aMatrizB[2*4 + j] +
+								aMatrizA[i*4 + 3]*aMatrizB[3*4 + j];
+	return retorno;
+}
+
+/*Operador3D.prototype.multiplicar= function (aA, aB)
 
 {
 	var retorno= this.reservar (16);
@@ -45,6 +58,7 @@ Operador3D.prototype.multiplicar= function (aA, aB)
 	var i20=  8, i21=  9, i22= 10, i23= 11;
 	var i30= 12, i31= 13, i32= 14, i33= 15;
 
+	
 	retorno[i00]= aA[i00]*aB[i00] + aA[i01]*aB[i10] + aA[i02]*aB[i20] + aA[i03]*aB[i30];
 	retorno[i01]= aA[i00]*aB[i01] + aA[i01]*aB[i11] + aA[i02]*aB[i21] + aA[i03]*aB[i31];
 	retorno[i02]= aA[i00]*aB[i02] + aA[i01]*aB[i12] + aA[i02]*aB[i22] + aA[i03]*aB[i32];
@@ -66,17 +80,18 @@ Operador3D.prototype.multiplicar= function (aA, aB)
 	retorno[i33]= aA[i30]*aB[i03] + aA[i31]*aB[i13] + aA[i32]*aB[i23] + aA[i33]*aB[i33];
 
 	return retorno;
-}
+}*/
 
 Operador3D.prototype.multiplicarPorVetor= function (aMatriz, aVetor)
 
 {
 	var retorno= this.reservar (4);
 	var w= aVetor.length <= 3 ? 1 : aVetor[3];
-	retorno[0]= aMatriz[ 0]*aVetor[0] + aMatriz[ 1]*aVetor[1] + aMatriz[ 2]*aVetor[2] + aMatriz[ 3]*w;
-	retorno[1]= aMatriz[ 4]*aVetor[0] + aMatriz[ 5]*aVetor[1] + aMatriz[ 6]*aVetor[2] + aMatriz[ 7]*w;
-	retorno[2]= aMatriz[ 8]*aVetor[0] + aMatriz[ 9]*aVetor[1] + aMatriz[10]*aVetor[2] + aMatriz[11]*w;
-	retorno[3]= aMatriz[12]*aVetor[0] + aMatriz[13]*aVetor[1] + aMatriz[14]*aVetor[2] + aMatriz[15]*w;
+	for (var j= 0; j < 4; j++)
+		retorno[j]= aMatriz[0*4 + j]*aVetor[0] + 
+					aMatriz[1*4 + j]*aVetor[1] + 
+					aMatriz[2*4 + j]*aVetor[2] + 
+					aMatriz[3*4 + j]*w;
 	return retorno;
 }
 
@@ -108,21 +123,22 @@ Operador3D.prototype.olharPara= function (aEye, aAt, aUp)
 	var f= this.normalizar ([aAt[0]-aEye[0], aAt[1]-aEye[1], aAt[2]-aEye[2]]);
 	var s= this.normalizar (this.cross (f, aUp));
 	var u= this.cross (s, f);
-	m[ 0]=	s[0]; m[ 1]=  s[1]; m[ 2]=	s[2]; m[ 3]= 0;
-	m[ 4]=	u[0]; m[ 5]=  u[1]; m[ 6]=	u[2]; m[ 7]= 0;
-	m[ 8]= -f[0]; m[ 9]= -f[1]; m[10]= -f[2]; m[11]= 0;
-	m[12]=	   0; m[13]=	 0; m[14]=	   0; m[15]= 1;
+	m[ 0]= s[0]; m[ 4]= u[0]; m[ 8]= -f[0]; m[12]= 0;
+	m[ 1]= s[1]; m[ 5]= u[1]; m[ 9]= -f[1]; m[13]= 0;
+	m[ 2]= s[2]; m[ 6]= u[2]; m[10]= -f[2]; m[14]= 0;
+	m[ 3]= 0;    m[ 7]= 0;    m[11]= 0;     m[15]= 1;
 	return this.transladar (m, [-aEye[0], -aEye[1], -aEye[2]]);
 }
 
+// [Column-major order] Secao 2.11.2: https://www.khronos.org/registry/OpenGL/specs/gl/glspec21.pdf
 Operador3D.prototype.obterIdentidade= function ()
 
 {
 	var retorno= this.reservar (16);
-	retorno[ 0]= 1; retorno[ 1]= 0; retorno[ 2]= 0; retorno[ 3]= 0;
-	retorno[ 4]= 0; retorno[ 5]= 1; retorno[ 6]= 0; retorno[ 7]= 0;
-	retorno[ 8]= 0; retorno[ 9]= 0; retorno[10]= 1; retorno[11]= 0;
-	retorno[12]= 0; retorno[13]= 0; retorno[14]= 0; retorno[15]= 1;
+	retorno[ 0]= 1; retorno[ 4]= 0; retorno[ 8]= 0; retorno[12]= 0;
+	retorno[ 1]= 0; retorno[ 5]= 1; retorno[ 9]= 0; retorno[13]= 0;
+	retorno[ 2]= 0; retorno[ 6]= 0; retorno[10]= 1; retorno[14]= 0;
+	retorno[ 3]= 0; retorno[ 7]= 0; retorno[11]= 0; retorno[15]= 1;
 	return retorno;
 }
 
@@ -136,10 +152,10 @@ Operador3D.prototype.obterPerspectivaLH= function (aFOVY, aAspect, aZNear, aZFar
 	var d= aZFar-aZNear;
 	if ((d != 0) && (sen != 0) && (aAspect != 0)) {
 		var cot= Math.cos (angulo) / sen;
-		retorno[ 0]= cot/aAspect;	retorno[ 1]= 0;		retorno[ 2]= 0;			retorno[ 3]= 0;
-		retorno[ 4]= 0;				retorno[ 5]= cot;	retorno[ 6]= 0;			retorno[ 7]= 0;
-		retorno[ 8]= 0;				retorno[ 9]= 0;		retorno[10]= aZFar/d;	retorno[11]= -(aZNear*aZFar)/d;
-		retorno[12]= 0;				retorno[13]= 0;		retorno[14]= 1;			retorno[15]= 0;
+		retorno[ 0]= cot/aAspect;	retorno[ 4]= 0;		retorno[ 8]= 0;					retorno[12]= 0;
+		retorno[ 1]= 0;				retorno[ 5]= cot;	retorno[ 9]= 0;					retorno[13]= 0;
+		retorno[ 2]= 0;				retorno[ 6]= 0;		retorno[10]= aZFar/d;			retorno[14]= 1;
+		retorno[ 3]= 0;				retorno[ 7]= 0;		retorno[11]= -(aZNear*aZFar)/d;	retorno[15]= 0;
 	}
 	return retorno;
 };
@@ -151,16 +167,16 @@ Operador3D.prototype.obterPerspectiva= function (aFOVY, aAspect, aZNear, aZFar)
 	var retorno= this.reservar (16);
 	var angulo= this.cnvGrausParaRadianos (aFOVY/2);
 	var sen= Math.sin (angulo);
-	var d= aZFar-aZNear;
+	var d= aZNear-aZFar;
 	if ((d != 0) && (sen != 0) && (aAspect != 0)) {
 		var cot= Math.cos (angulo) / sen;
-		retorno[ 0]= cot/aAspect;	retorno[ 1]= 0;		retorno[ 2]= 0;					retorno[ 3]= 0;
-		retorno[ 4]= 0;				retorno[ 5]= cot;	retorno[ 6]= 0;					retorno[ 7]= 0;
-		retorno[ 8]= 0;				retorno[ 9]= 0;		retorno[10]= -(aZNear+aZFar)/d;	retorno[11]= -(2*aZNear*aZFar)/d;
-		retorno[12]= 0;				retorno[13]= 0;		retorno[14]= -1;				retorno[15]= 0;
+		retorno[ 0]= cot/aAspect;	retorno[ 4]= 0;		retorno[ 8]= 0;						retorno[12]= 0;
+		retorno[ 1]= 0;				retorno[ 5]= cot;	retorno[ 9]= 0;						retorno[13]= 0;
+		retorno[ 2]= 0;				retorno[ 6]= 0;		retorno[10]= (aZNear+aZFar)/d;		retorno[14]= -1;
+		retorno[ 3]= 0;				retorno[ 7]= 0;		retorno[11]= (2*aZNear*aZFar)/d;	retorno[15]= 0;
+
 	}
 	return retorno;
-
 };
 
 Operador3D.prototype.poderNormalizar= function (aVetor)
@@ -183,17 +199,17 @@ Operador3D.prototype.rotacionar= function (aMatriz, aAngulo, aVetor)
 	if (!this.poderNormalizar (aVetor))
 		retorno= this.obterIdentidade ();
 	else {
-		var matrizRotacao= this.reservar (16);
+		var m= this.reservar (16);
 		var angulo= this.cnvGrausParaRadianos (aAngulo);
 		var cos= Math.cos (angulo);
 		var sen= Math.sin (angulo);
 		var u= this.normalizar (aVetor);
 		var t= 1 - cos;
-		matrizRotacao[ 0]= cos + u[0]*u[0]*t;		matrizRotacao[ 1]= u[0]*u[1]*t - u[2]*sen;	matrizRotacao[ 2]= u[0]*u[2]*t + u[1]*sen;	matrizRotacao[ 3]= 0;
-		matrizRotacao[ 4]= u[1]*u[0]*t + u[2]*sen;	matrizRotacao[ 5]= cos + u[1]*u[1]*t;		matrizRotacao[ 6]= u[1]*u[2]*t - u[0]*sen;	matrizRotacao[ 7]= 0;
-		matrizRotacao[ 8]= u[2]*u[0]*t - u[1]*sen;	matrizRotacao[ 9]= u[2]*u[1]*t + u[0]*sen;	matrizRotacao[10]= cos + u[2]*u[2]*t;		matrizRotacao[15]= 0;
-		matrizRotacao[12]= 0;						matrizRotacao[13]= 0;						matrizRotacao[14]= 0;						matrizRotacao[15]= 1;
-		retorno= this.multiplicar (matrizRotacao, aMatriz);
+		m[ 0]= cos + u[0]*u[0]*t;		m[ 4]= u[0]*u[1]*t - u[2]*sen;	m[ 8]= u[0]*u[2]*t + u[1]*sen;	m[12]= 0;
+		m[ 1]= u[1]*u[0]*t + u[2]*sen;	m[ 5]= cos + u[1]*u[1]*t;		m[ 9]= u[1]*u[2]*t - u[0]*sen;	m[13]= 0;
+		m[ 2]= u[2]*u[0]*t - u[1]*sen;	m[ 6]= u[2]*u[1]*t + u[0]*sen;  m[10]= cos + u[2]*u[2]*t;		m[14]= 0;
+		m[ 3]= 0;						m[ 7]= 0;                       m[11]= 0;						m[15]= 1;
+		retorno= this.multiplicar (m, aMatriz);
 	}
 	return retorno;
 }
@@ -201,11 +217,11 @@ Operador3D.prototype.rotacionar= function (aMatriz, aAngulo, aVetor)
 Operador3D.prototype.transladar= function (aMatriz, aVetor)
 
 {
-	var matrizTranslacao= this.obterIdentidade ();
-	matrizTranslacao[ 3]= aVetor[0];
-	matrizTranslacao[ 7]= aVetor[1];
-	matrizTranslacao[11]= aVetor[2];
-	return this.multiplicar (matrizTranslacao, aMatriz);
+	var m= this.obterIdentidade ();
+	m[12]= aVetor[0];
+	m[13]= aVetor[1];
+	m[14]= aVetor[2];
+	return this.multiplicar (m, aMatriz);
 }
 
 Operador3D.prototype.visualizar= function (aMatriz, aVertice)
