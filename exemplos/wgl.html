@@ -26,18 +26,17 @@
 		<script src="../js/wgl.js"></script>
 		<script>
 			var wgl= new WebGL ();
-			wgl.shaderPadrao= ['vec4 (shaderVertexPosition, 1.5)', 'vec4 (0, 1.0, 1.0, 1.0)'];
 
-			/*wgl.aoCarregarShader= function (aVertex)
+			wgl.aoCarregarShader= function (aVertex)
 
 			{
 				var retorno;
 				if (aVertex)
-					retorno= 'attribute vec3 shaderVertexPosition; void main () {gl_Position= vec4 (shaderVertexPosition, 1);}';
+					retorno= 'attribute vec3 shaderVertexPosition; void main () {gl_Position= vec4 (shaderVertexPosition, 1.5);}';
 				else
 					retorno= 'void main () {gl_FragColor= vec4 (0, 0, 1.0, 1.0);}';
 				return retorno;
-			}*/
+			}
 
 			function desenhar ()
 			
@@ -51,19 +50,18 @@
 						gl.depthFunc (gl.LEQUAL);
 						gl.viewport (0, 0, wgl.canvas.width, wgl.canvas.height);
 						gl.clear (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-						gl.useProgram (this.wgl.shaderProgram);
 
 					// Armazenar o objeto a ser desenhado
-						var vertices= [
+						var vertices= new Float32Array ([
 						//	x	y	z
 							 1,  1, 0,	// Vertex 1 (canto superior direito)
 							 1, -1, 0,	// Vertex 2 (canto inferior direito)
 							-1, -1, 0,	// Vertex 3 (canto inferior esquerdo)
-						];
-						gl.bindBuffer (gl.ARRAY_BUFFER, gl.createBuffer ());
-						gl.bufferData (gl.ARRAY_BUFFER, new Float32Array (vertices), gl.STATIC_DRAW);
-						var attribLocation= wgl.obterAttribLocation ();
-						gl.vertexAttribPointer (attribLocation, 3, gl.FLOAT, false, 0, 0);
+						]);
+						wgl.reservarBuffer ('vertices', vertices);
+
+						gl.useProgram (wgl.shaderProgram);
+						wgl.selecionarBuffer ('vertices');
 
 					// Desenhar
 						gl.drawArrays (gl.TRIANGLE_STRIP, 0, 3);
