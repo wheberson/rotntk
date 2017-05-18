@@ -5,7 +5,7 @@
 -->
 <html lang="pt-BR">
 	<head>
-		<title>Traçador de funçoes em 3D com HTML5 Canvas</title>
+		<title>Traçador de funçoes em 3D com WebGL</title>
 		<meta charset="UTF-8" />
 		<style>
 			em {color:gray;font-size:small}
@@ -64,13 +64,16 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 		<script src="../js/inicio.js"></script>
 		<script src="../js/calculadora.js"></script>
-		<script src="../js/2d-desenho.js"></script>
 		<script src="../js/3d-operador.js"></script>
-		<script src="../js/3d-tracador.canvas.js"></script>
+		<script src="../js/3d-tracador.wgl.js"></script>
+		<script src="../js/wgl.js"></script>
 		<script>
 			var camera= {at: [0, 0, 0], eye: [0, 0, 2], up: [0, 1, 0]};
 			var clicou= false;
+			var matrizProjection;
+			var operador= new Operador3D ();
 			var posicao= [0, 0];
+			var qtdVertices3D= 0;
 			var rotacao= {usr: [0, 0, 0], mouse: [0, 0]};
 			var tracador= 0;
 			var vertices;
@@ -130,7 +133,7 @@
 			function calcularExpressao (aValor, aXI,  aIntervalo, aPontos)
 
 			{
-				tracador= new Tracador3DCanvas (aValor, aXI, aIntervalo, aPontos, 'dodgerblue');
+				tracador= new Tracador3DWGL (aValor, aXI, aIntervalo, aPontos);
 				var Retorno= tracador.erro;
 				if (Retorno == '') {
 					vertices= tracador.calcular ();
@@ -380,7 +383,7 @@
 		</script>
 	</head>
 	<body>
-		<h1>Traçador de funçoes em 3D com HTML5 Canvas</h1>
+		<h1>Traçador de funçoes em 3D com WebGL</h1>
 		<div id="info">
 			<div id="infoTitulo">Info <sub>&varr;</sub></div>
 			<div id="infoConteudo">
