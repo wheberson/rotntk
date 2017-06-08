@@ -9,16 +9,29 @@ function adcDias ($aValor, $aQtd)
 	$retorno= $aValor;
 	if (!empty ($aQtd) && ($aQtd != 0) && is_numeric ($aQtd)) {
 		$f= obterDataFormato ($aValor);
-		$retorno= $aQtd > 0 ? date ($f, strtotime ("+$aQtd days")) : date ($f, strtotime ("$aQtd days"));
+		$v= cnvDataAAAAMMDD ($aValor);
+		$retorno= $aQtd > 0 ? date ($f, strtotime ("$v +$aQtd days")) : date ($f, strtotime ("$v $aQtd days"));
 	}
 	return $retorno;
 }
 
-// Menor que 0: aData1 anterior a aData2; igual a 0: aData1 = aData2; maior que 0: aData1 posterior a aData2
-function compararDatas ($aData1, $aData2)
+function cnvDataAAAAMMDD ($aValor)
 
 {
-	return cnvStringParaTime ($aData1) - cnvStringParaTime ($aData2);
+	$retorno= '';
+	if (!empty ($aValor)) {
+		$h= '';
+		$n= strlen ($aValor);
+		if ($n == 10)
+			$cmp= explode ('/', $aValor);
+		else {
+			$cmp= explode (' ', $aValor);
+			$h= ' ' . $cmp[1];
+			$cmp= explode ('/', $cmp[0]);
+		}
+		$retorno= $cmp[2] . '-' . $cmp[1] . '-' . $cmp[0] . $h;
+	}
+	return $retorno;
 }
 
 // String (dd/mm/aaaa ou dd/mm/aaaa hh:mm ou dd/mm/aaaa hh:mm:ss) pra Date
@@ -53,6 +66,13 @@ function cnvStringParaTime ($aValor)
 		}
 	}
 	return $retorno;
+}
+
+// Menor que 0: aData1 anterior a aData2; igual a 0: aData1 = aData2; maior que 0: aData1 posterior a aData2
+function compararDatas ($aData1, $aData2)
+
+{
+	return cnvStringParaTime ($aData1) - cnvStringParaTime ($aData2);
 }
 
 // dd/mm/aaaa ou dd/mm/aaaa hh:mm ou dd/mm/aaaa hh:mm:ss
