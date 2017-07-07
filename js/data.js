@@ -43,11 +43,15 @@ function validarData (aValor)
 		if (cmp.length < 3)
 			return false;
 		else {
-			var dia= parseInt (cmp[0], 10);
-			var mes= parseInt (cmp[1], 10) - 1;
-			var ano= parseInt (cmp[2], 10);
-			var d= new Date (ano, mes, dia, 10, 0, 0, 0);
-			return ((d.getFullYear () == ano) && (d.getMonth () == mes) && (d.getDate () == dia));
+			if (isNaN (cmp[0]) || isNaN (cmp[1]) || isNaN (cmp[2]))
+				return false;
+			else {
+				var dia= parseInt (cmp[0], 10);
+				var mes= parseInt (cmp[1], 10) - 1;
+				var ano= parseInt (cmp[2], 10);
+				var d= new Date (ano, mes, dia, 10, 0, 0, 0);
+				return ((d.getFullYear () == ano) && (d.getMonth () == mes) && (d.getDate () == dia));
+			}
 		}
 	}
 }
