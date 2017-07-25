@@ -91,6 +91,40 @@ function obterDataFormato ($aValor)
 	return $retorno;
 }
 
+function obterMes ($aValor)
+
+{
+	$retorno= '';
+	if (!empty ($aValor))
+		switch ($aValor) {
+			case  1: $retorno= 'Janeiro'; break;
+			case  2: $retorno= 'Fevereiro'; break;
+			case  3: $retorno= 'Março'; break;
+			case  4: $retorno= 'Abril'; break;
+			case  5: $retorno= 'Maio'; break;
+			case  6: $retorno= 'Junho'; break;
+			case  7: $retorno= 'Julho'; break;
+			case  8: $retorno= 'Agosto'; break;
+			case  9: $retorno= 'Setembro'; break;
+			case 10: $retorno= 'Outubro'; break;
+			case 11: $retorno= 'Novembro'; break;
+			case 12: $retorno= 'Dezembro'; break;
+		}
+	return $retorno;
+}
+
+function obterMeses ($aInicial=1, $aFinal=12)
+
+{
+	$retorno= array ();
+	$iInicial= empty ($aInicial) ? 0 : $aInicial;
+	$iFinal= empty ($aFinal) ? 0 : $aFinal;
+	if ($iInicial <= $iFinal)
+		for ($i= $iInicial; $i <= $iFinal; $i++)
+			$retorno[$i]= obterMes ($i);
+	return $retorno;
+}
+
 // dd/mm/aaaa
 function validarData ($aValor)
 
