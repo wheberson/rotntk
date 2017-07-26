@@ -119,7 +119,7 @@ function obterMeses ($aInicial=1, $aFinal=12)
 	$retorno= array ();
 	$iInicial= empty ($aInicial) ? 0 : $aInicial;
 	$iFinal= empty ($aFinal) ? 0 : $aFinal;
-	if ($iInicial <= $iFinal)
+	if (!empty ($iInicial) && !empty ($iFinal) && ($iInicial <= $iFinal) && ($iFinal <= 12))
 		for ($i= $iInicial; $i <= $iFinal; $i++)
 			$retorno[$i]= obterMes ($i);
 	return $retorno;
