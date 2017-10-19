@@ -55,3 +55,31 @@ function validarData (aValor)
 		}
 	}
 }
+
+function validarDataHora (aValor)
+
+{
+	var serHM= aValor && (aValor.length == 16);
+	var serHMS= aValor && (aValor.length == 19);
+	if ((serHM || serHMS) && (aValor[10] == ' ')) {
+		var cmp= aValor.split (' ');
+		var d= cmp[0];
+		var h= cmp[1];
+		if (!validarData (d))
+			return false;
+		else {
+			cmp= h.split (':');
+			if ((serHM && ((cmp.length != 2) || isNaN (cmp[0]) || isNaN (cmp[1]))) ||
+				(serHMS && ((cmp.length != 3) || isNaN (cmp[0]) || isNaN (cmp[1]) || isNaN (cmp[2]))))
+				return false;
+			else { 
+				var hora= parseInt (cmp[0], 10);
+				var minuto= parseInt (cmp[1], 10);
+				var segundo= serHM ? 0 : parseInt (cmp[2], 10);
+				return (hora >= 0) && (hora <= 23) && (minuto >= 0) && (minuto <= 59) && (segundo >= 0) && (segundo <= 59);
+			}
+		}
+	}
+	else
+		return false;
+}
